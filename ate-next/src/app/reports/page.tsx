@@ -1,3 +1,4 @@
+'use client'
 import { supabase } from '../lib/supabase'
 import Topbar from '../components/Topbar'
 
