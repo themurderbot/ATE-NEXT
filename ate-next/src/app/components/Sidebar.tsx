@@ -11,6 +11,7 @@ const navItems = [
     { id: 'clients',  ar: 'العملاء',    en: 'Clients',      icon: '👥', href: '/clients',  badge: '248', badgeColor: 'blue' },
     { id: 'requests', ar: 'الطلبات',    en: 'Requests',     icon: '📋', href: '/requests', badge: '12',  badgeColor: 'red' },
     { id: 'pipeline', ar: 'Pipeline',   en: 'Pipeline',     icon: '🔄', href: '/pipeline' },
+    { id: 'map', ar: 'الخريطة', en: 'Map', icon: '🗺️', href: '/map' },
   ]},
   { section: { ar: 'المالية', en: 'FINANCE' }, items: [
     { id: 'invoices', ar: 'الفواتير',   en: 'Invoices',     icon: '💰', href: '/invoices', badge: '8', badgeColor: 'yellow' },
