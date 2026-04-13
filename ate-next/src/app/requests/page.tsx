@@ -54,21 +54,28 @@ export default function RequestsPage() {
     setShowModal(true)
   }
 
-  async function handleSave() {
+async function handleSave() {
     if (!form.client_id || !form.devices_count) return
     setSaving(true)
     const code = `REQ-${new Date().getFullYear()}-${String(Math.floor(Math.random()*9000)+1000)}`
-    const { error } = await supabase.from('requests').insert([{
-      request_code: code, client_id: form.client_id,
-      property_id: form.property_id || null,
+    
+    const payload: any = {
+      request_code: code,
+      client_id: form.client_id,
       devices_count: parseInt(form.devices_count) || 0,
       total_amount: parseFloat(form.total_amount) || 0,
-      stage: form.stage, notes: form.notes,
-    }])
+      stage: form.stage,
+      notes: form.notes || null,
+    }
+    if (form.property_id) payload.property_id = form.property_id
+
+    const { error } = await supabase.from('requests').insert([payload])
     if (!error) {
       setShowModal(false)
       setForm({ client_id:'', property_id:'', devices_count:'', total_amount:'', notes:'', stage:'new' })
       load()
+    } else {
+      console.error('Insert error:', error)
     }
     setSaving(false)
   }
