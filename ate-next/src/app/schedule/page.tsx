@@ -35,7 +35,7 @@ export default function SchedulePage() {
   async function load() {
     setLoading(true)
     const [{ data: sc }, { data: tc }] = await Promise.all([
-      supabase.from('schedules').select('*, clients(company_name), properties(property_name)').order('scheduled_date,scheduled_time', { ascending: true }),
+      supabase.from('schedules').select('*, requests(request_code, clients(company_name), properties(property_name))').order('scheduled_date,scheduled_time', { ascending: true }).order('scheduled_date,scheduled_time', { ascending: true }),
       supabase.from('technicians').select('*').eq('is_active', true).order('full_name'),
     ])
     if (sc) setJobs(sc)
@@ -245,8 +245,8 @@ export default function SchedulePage() {
                   <div style={{ fontSize:'9px', opacity:.8 }}>{job.scheduled_date ? new Date(job.scheduled_date+'T00:00').toLocaleString('en-GB',{month:'short'}) : '—'}</div>
                 </div>
                 <div style={{ flex:1 }}>
-                  <div style={{ fontWeight:700, fontSize:'14px', color:'#1a202c', marginBottom:'2px' }}>{job.clients?.company_name||'—'}</div>
-                  <div style={{ fontSize:'12px', color:'#718096' }}>{job.properties?.property_name||'—'}</div>
+                  <div style={{ fontWeight:700, fontSize:'14px', color:'#1a202c', marginBottom:'2px' }}>{(job as any).requests?.clients?.company_name||'—'}</div>
+                  <div style={{ fontSize:'12px', color:'#718096' }}>{(job as any).requests?.properties?.property_name||'—'}</div>
                   {job.scheduled_time && <div style={{ fontSize:'11px', color:'#805ad5' }}>🕐 {job.scheduled_time} · {job.job_type||'Visit'}</div>}
                 </div>
                 <div style={{ textAlign:'center', flexShrink:0 }}>
