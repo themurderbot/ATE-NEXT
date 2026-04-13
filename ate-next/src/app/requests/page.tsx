@@ -21,7 +21,7 @@ export default function RequestsPage() {
   const [saving, setSaving]     = useState(false)
   const [clients, setClients]   = useState<Client[]>([])
   const [properties, setProperties] = useState<Property[]>([])
-  const [form, setForm] = useState({ client_id:'', property_id:'', devices_count:'', total_amount:'', notes:'', stage:'new' })
+  const [form, setForm] = useState({ client_id:'', property_id:'', devices_count:'', unit_price:'', notes:'', stage:'new' })
 
   const stageLabel: Record<string,string> = {
     new: t('① طلب جديد','① New'), awaiting_payment: t('② بانتظار الدفع','② Awaiting Payment'),
@@ -54,16 +54,16 @@ export default function RequestsPage() {
     setShowModal(true)
   }
 
-async function handleSave() {
+  async function handleSave() {
     if (!form.client_id || !form.devices_count) return
     setSaving(true)
     const code = `REQ-${new Date().getFullYear()}-${String(Math.floor(Math.random()*9000)+1000)}`
-    
+
     const payload: any = {
       request_code: code,
       client_id: form.client_id,
       devices_count: parseInt(form.devices_count) || 0,
-      total_amount: parseFloat(form.total_amount) || 0,
+      unit_price: parseFloat(form.unit_price) || 0,
       stage: form.stage,
       notes: form.notes || null,
     }
@@ -72,10 +72,10 @@ async function handleSave() {
     const { error } = await supabase.from('requests').insert([payload])
     if (!error) {
       setShowModal(false)
-      setForm({ client_id:'', property_id:'', devices_count:'', total_amount:'', notes:'', stage:'new' })
+      setForm({ client_id:'', property_id:'', devices_count:'', unit_price:'', notes:'', stage:'new' })
       load()
     } else {
-      console.error('Insert error:', error)
+      console.error('Insert error:', JSON.stringify(error))
     }
     setSaving(false)
   }
@@ -93,7 +93,6 @@ async function handleSave() {
     <div dir={dir} style={{ fontFamily:'Tajawal, Arial, sans-serif', minHeight:'100vh', background:'#f7f8fc' }}>
       <Topbar title="الطلبات الواردة" titleEn="Requests" />
       <div style={{ padding:'24px' }}>
-
         <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom:'20px' }}>
           <div>
             <div style={{ fontSize:'20px', fontWeight:900, color:'#1a202c' }}>📋 {t('الطلبات الواردة','Incoming Requests')}</div>
@@ -170,7 +169,6 @@ async function handleSave() {
         </div>
       </div>
 
-      {/* Modal */}
       {showModal && (
         <div style={{ position:'fixed', inset:0, background:'rgba(0,0,0,.5)', display:'flex', alignItems:'center', justifyContent:'center', zIndex:9999 }}
           onClick={e=>{ if(e.target===e.currentTarget) setShowModal(false) }}>
@@ -199,8 +197,8 @@ async function handleSave() {
                 <input type="number" value={form.devices_count} onChange={e=>setForm(f=>({...f,devices_count:e.target.value}))} placeholder="0" style={{ width:'100%', padding:'9px 12px', border:'1px solid #e2e5ea', borderRadius:'8px', fontSize:'13px', fontFamily:'Tajawal,sans-serif', outline:'none', boxSizing:'border-box' }} />
               </div>
               <div>
-                <label style={{ fontSize:'11px', fontWeight:700, color:'#4a5568', display:'block', marginBottom:'5px' }}>{t('القيمة الإجمالية','Total Amount')}</label>
-                <input type="number" value={form.total_amount} onChange={e=>setForm(f=>({...f,total_amount:e.target.value}))} placeholder="0.00" style={{ width:'100%', padding:'9px 12px', border:'1px solid #e2e5ea', borderRadius:'8px', fontSize:'13px', fontFamily:'Tajawal,sans-serif', outline:'none', boxSizing:'border-box' }} />
+                <label style={{ fontSize:'11px', fontWeight:700, color:'#4a5568', display:'block', marginBottom:'5px' }}>{t('سعر الوحدة','Unit Price')}</label>
+                <input type="number" value={form.unit_price} onChange={e=>setForm(f=>({...f,unit_price:e.target.value}))} placeholder="0.00" style={{ width:'100%', padding:'9px 12px', border:'1px solid #e2e5ea', borderRadius:'8px', fontSize:'13px', fontFamily:'Tajawal,sans-serif', outline:'none', boxSizing:'border-box' }} />
               </div>
               <div>
                 <label style={{ fontSize:'11px', fontWeight:700, color:'#4a5568', display:'block', marginBottom:'5px' }}>{t('المرحلة','Stage')}</label>
