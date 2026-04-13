@@ -45,10 +45,12 @@ export default function Sidebar() {
   }, [pathname])
 
 async function handleLogout() {
-    setLoggingOut(true)
-    await supabase.auth.signOut()
-    window.location.href = '/login'
-  }
+  setLoggingOut(true)
+  try { await supabase.auth.signOut() } catch(e) {}
+  localStorage.clear()
+  sessionStorage.clear()
+  window.location.replace('/login')
+}
 
   return (
     <aside style={{
