@@ -1,7 +1,6 @@
 import type { Metadata } from 'next'
 import './globals.css'
-import Sidebar from './components/Sidebar'
-import { LangProvider } from './lib/LangContext'
+import ClientLayout from './components/ClientLayout'
 
 export const metadata: Metadata = {
   title: 'ATE Platform — CRM',
@@ -12,14 +11,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="ar">
       <body>
-        <LangProvider>
-          <div style={{ display: 'flex', minHeight: '100vh', flexDirection: 'row-reverse' }}>
-            <Sidebar />
-            <main style={{ flex: 1, display: 'flex', flexDirection: 'column', minWidth: 0 }}>
-              {children}
-            </main>
-          </div>
-        </LangProvider>
+        <ClientLayout>{children}</ClientLayout>
       </body>
     </html>
   )
