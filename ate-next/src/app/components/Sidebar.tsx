@@ -44,10 +44,10 @@ export default function Sidebar() {
     if (match) setActive(match.id)
   }, [pathname])
 
-  async function handleLogout() {
+async function handleLogout() {
     setLoggingOut(true)
     await supabase.auth.signOut()
-    router.push('/login')
+    window.location.href = '/login'
   }
 
   return (
