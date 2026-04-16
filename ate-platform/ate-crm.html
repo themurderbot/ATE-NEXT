@@ -1,0 +1,1839 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ATE — CRM الداخلي | نظام إدارة العمليات</title>
+<script>
+var currentLang = "ar";
+function t(a,e){ return currentLang==="ar" ? a : e; }
+</script>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;900&family=Rajdhani:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:     #f0f2f5;
+  --bg2:    #e8eaed;
+  --white:  #ffffff;
+  --panel:  #ffffff;
+  --border: #e2e5ea;
+  --bord2:  #d0d5dd;
+  --text:   #1a202c;
+  --text2:  #4a5568;
+  --text3:  #a0aec0;
+  --red:    #e53e3e;
+  --red2:   #c53030;
+  --orange: #dd6b20;
+  --yellow: #d69e2e;
+  --green:  #38a169;
+  --green2: #2f855a;
+  --cyan:   #0099cc;
+  --blue:   #3182ce;
+  --blue2:  #2b6cb0;
+  --purple: #805ad5;
+  --gold:   #b7791f;
+  --fa: 'Tajawal', sans-serif;
+  --fe: 'Rajdhani', sans-serif;
+  --fm: 'IBM Plex Mono', monospace;
+  --shadow: 0 1px 3px rgba(0,0,0,.08), 0 1px 2px rgba(0,0,0,.04);
+  --shadow2: 0 4px 16px rgba(0,0,0,.1);
+  --radius: 12px;
+}
+
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{background:var(--bg);color:var(--text);font-family:var(--fa);min-height:100vh;overflow-x:hidden;}
+
+/* ══ LAYOUT ══ */
+.crm-app{display:flex;min-height:100vh;}
+
+/* ══ SIDEBAR ══ */
+.crm-sidebar{
+  width:240px;flex-shrink:0;
+  background:var(--text);
+  display:flex;flex-direction:column;
+  position:sticky;top:0;height:100vh;
+  overflow:hidden;
+}
+
+.cs-logo{
+  padding:22px 18px 18px;
+  border-bottom:1px solid rgba(255,255,255,.08);
+  display:flex;align-items:center;gap:10px;
+}
+.cs-logo-icon{
+  width:36px;height:36px;
+  background:linear-gradient(135deg,#e53e3e,#dd6b20);
+  border-radius:9px;display:flex;align-items:center;justify-content:center;
+  font-size:16px;flex-shrink:0;
+  box-shadow:0 0 14px rgba(229,62,62,.4);
+}
+.cs-logo-text .ate{font-family:var(--fe);font-size:17px;font-weight:700;letter-spacing:3px;color:#fff;}
+.cs-logo-text .crm-sub{font-size:9px;color:rgba(255,255,255,.4);letter-spacing:1px;}
+
+.cs-nav{flex:1;overflow-y:auto;padding:10px 0;}
+.cs-section-label{font-size:9px;color:rgba(255,255,255,.3);letter-spacing:2px;text-transform:uppercase;padding:12px 18px 5px;font-family:var(--fe);}
+.cs-item{
+  display:flex;align-items:center;gap:10px;
+  padding:9px 18px;cursor:pointer;
+  color:rgba(255,255,255,.55);font-size:13px;
+  transition:all .2s;margin:1px 8px;border-radius:8px;
+  border:1px solid transparent;position:relative;
+}
+.cs-item:hover{background:rgba(255,255,255,.07);color:rgba(255,255,255,.85);}
+.cs-item.active{
+  background:linear-gradient(135deg,rgba(229,62,62,.2),rgba(221,107,32,.12));
+  color:#fff;border-color:rgba(229,62,62,.3);font-weight:700;
+}
+.cs-item.active::before{
+  content:'';position:absolute;right:-9px;top:20%;bottom:20%;
+  width:3px;background:linear-gradient(to bottom,#e53e3e,#dd6b20);
+  border-radius:2px 0 0 2px;
+}
+.cs-icon{font-size:15px;width:18px;text-align:center;flex-shrink:0;}
+.cs-badge{
+  margin-right:auto;font-size:9px;font-family:var(--fm);
+  padding:2px 6px;border-radius:8px;font-weight:600;
+}
+.cs-badge.red{background:rgba(229,62,62,.25);color:#fc8181;}
+.cs-badge.yellow{background:rgba(214,158,46,.2);color:#f6e05e;}
+.cs-badge.green{background:rgba(56,161,105,.2);color:#68d391;}
+.cs-badge.blue{background:rgba(49,130,206,.2);color:#90cdf4;}
+
+.cs-bottom{
+  padding:12px 16px;
+  border-top:1px solid rgba(255,255,255,.08);
+}
+.cs-user{
+  display:flex;align-items:center;gap:9px;
+  padding:9px 10px;background:rgba(255,255,255,.06);
+  border-radius:8px;border:1px solid rgba(255,255,255,.08);
+}
+.cs-av{
+  width:30px;height:30px;border-radius:50%;
+  background:linear-gradient(135deg,var(--red),var(--orange));
+  display:flex;align-items:center;justify-content:center;
+  font-size:12px;font-weight:700;color:#fff;flex-shrink:0;
+}
+.cs-uname{font-size:11px;font-weight:700;color:#fff;}
+.cs-urole{font-size:9px;color:rgba(255,255,255,.4);}
+
+/* ══ MAIN ══ */
+.crm-main{flex:1;display:flex;flex-direction:column;min-width:0;}
+
+.crm-topbar{
+  background:var(--white);border-bottom:1px solid var(--border);
+  padding:0 24px;height:56px;
+  display:flex;align-items:center;gap:14px;
+  position:sticky;top:0;z-index:100;
+  box-shadow:var(--shadow);
+}
+.crm-topbar-title{font-size:15px;font-weight:700;flex:1;}
+.crm-topbar-title span{color:var(--text3);font-weight:400;font-size:12px;margin-left:6px;}
+
+.topbar-search{
+  display:flex;align-items:center;gap:8px;
+  background:var(--bg);border:1px solid var(--border);
+  border-radius:8px;padding:7px 12px;width:220px;
+}
+.topbar-search input{
+  border:none;background:transparent;outline:none;
+  font-size:12px;font-family:var(--fa);color:var(--text);width:100%;
+}
+.topbar-search input::placeholder{color:var(--text3);}
+
+.topbar-btn{
+  width:34px;height:34px;border-radius:8px;
+  background:var(--bg);border:1px solid var(--border);
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;font-size:15px;transition:all .2s;position:relative;
+}
+.topbar-btn:hover{background:var(--bg2);border-color:var(--bord2);}
+.topbar-notif{
+  position:absolute;top:-3px;right:-3px;
+  width:16px;height:16px;background:var(--red);
+  border-radius:50%;font-size:9px;color:#fff;
+  display:flex;align-items:center;justify-content:center;
+  font-family:var(--fm);font-weight:700;border:2px solid var(--white);
+}
+
+.crm-content{flex:1;overflow-y:auto;padding:22px 24px;}
+.crm-page{display:none;animation:fadeIn .25s ease;}
+.crm-page.active{display:block;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+
+/* ══ COMPONENTS ══ */
+
+/* KPI CARDS */
+.kpi-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:20px;}
+.kpi-card{
+  background:var(--white);border:1px solid var(--border);
+  border-radius:var(--radius);padding:18px;
+  box-shadow:var(--shadow);position:relative;overflow:hidden;
+  transition:all .2s;
+}
+.kpi-card:hover{box-shadow:var(--shadow2);transform:translateY(-2px);}
+.kpi-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;}
+.kpi-card.red::before{background:linear-gradient(90deg,var(--red),var(--orange));}
+.kpi-card.green::before{background:linear-gradient(90deg,var(--green),var(--cyan));}
+.kpi-card.blue::before{background:linear-gradient(90deg,var(--blue),var(--purple));}
+.kpi-card.yellow::before{background:linear-gradient(90deg,var(--yellow),var(--orange));}
+.kpi-card.gold::before{background:linear-gradient(90deg,var(--gold),var(--yellow));}
+.kpi-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:12px;}
+.kpi-icon{width:38px;height:38px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:18px;}
+.kpi-icon.red{background:rgba(229,62,62,.1);}
+.kpi-icon.green{background:rgba(56,161,105,.1);}
+.kpi-icon.blue{background:rgba(49,130,206,.1);}
+.kpi-icon.yellow{background:rgba(214,158,46,.1);}
+.kpi-icon.gold{background:rgba(183,121,31,.1);}
+.kpi-change{font-size:10px;font-weight:700;padding:2px 7px;border-radius:6px;}
+.kpi-change.up{background:rgba(56,161,105,.1);color:var(--green);}
+.kpi-change.down{background:rgba(229,62,62,.1);color:var(--red);}
+.kpi-change.neutral{background:rgba(0,0,0,.06);color:var(--text2);}
+.kpi-val{font-size:28px;font-weight:700;font-family:var(--fe);line-height:1;margin-bottom:4px;}
+.kpi-val.red{color:var(--red)}.kpi-val.green{color:var(--green)}.kpi-val.blue{color:var(--blue)}.kpi-val.yellow{color:var(--yellow)}.kpi-val.gold{color:var(--gold)}
+.kpi-lbl{font-size:12px;color:var(--text2);}
+
+/* PANEL */
+.crm-panel{background:var(--white);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;margin-bottom:16px;box-shadow:var(--shadow);}
+.crm-panel-hd{padding:14px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;}
+.crm-panel-title{font-size:13px;font-weight:700;display:flex;align-items:center;gap:8px;}
+.crm-panel-body{padding:16px 18px;}
+
+/* TABLE */
+.crm-table{width:100%;border-collapse:collapse;}
+.crm-table th{padding:9px 14px;text-align:right;font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:1px;font-family:var(--fm);border-bottom:2px solid var(--border);background:var(--bg);font-weight:600;white-space:nowrap;}
+.crm-table td{padding:11px 14px;font-size:12px;border-bottom:1px solid var(--border);vertical-align:middle;}
+.crm-table tr:last-child td{border-bottom:none;}
+.crm-table tr:hover td{background:rgba(49,130,206,.02);cursor:pointer;}
+.crm-table tbody tr{transition:background .15s;}
+
+/* BADGES */
+.badge{display:inline-flex;align-items:center;gap:3px;padding:3px 9px;border-radius:20px;font-size:10px;font-weight:700;white-space:nowrap;}
+.badge-red{background:rgba(229,62,62,.1);color:var(--red);border:1px solid rgba(229,62,62,.2);}
+.badge-green{background:rgba(56,161,105,.1);color:var(--green);border:1px solid rgba(56,161,105,.2);}
+.badge-blue{background:rgba(49,130,206,.1);color:var(--blue);border:1px solid rgba(49,130,206,.2);}
+.badge-yellow{background:rgba(214,158,46,.1);color:var(--yellow);border:1px solid rgba(214,158,46,.2);}
+.badge-orange{background:rgba(221,107,32,.1);color:var(--orange);border:1px solid rgba(221,107,32,.2);}
+.badge-purple{background:rgba(128,90,213,.1);color:var(--purple);border:1px solid rgba(128,90,213,.2);}
+.badge-gray{background:rgba(0,0,0,.06);color:var(--text2);border:1px solid var(--border);}
+
+/* BUTTONS */
+.btn{padding:8px 16px;border-radius:8px;border:none;font-size:12px;font-weight:700;cursor:pointer;font-family:var(--fa);transition:all .2s;display:inline-flex;align-items:center;gap:5px;white-space:nowrap;}
+.btn:hover{opacity:.88;transform:translateY(-1px);}
+.btn-primary{background:linear-gradient(135deg,var(--blue),var(--blue2));color:#fff;}
+.btn-success{background:linear-gradient(135deg,var(--green),var(--green2));color:#fff;}
+.btn-danger{background:linear-gradient(135deg,var(--red),var(--red2));color:#fff;}
+.btn-warning{background:linear-gradient(135deg,var(--yellow),var(--orange));color:#fff;}
+.btn-outline{background:transparent;border:1px solid var(--bord2);color:var(--text2);}
+.btn-outline:hover{border-color:var(--blue);color:var(--blue);background:rgba(49,130,206,.05);}
+.btn-sm{padding:5px 10px;font-size:11px;}
+.btn-gold{background:linear-gradient(135deg,var(--gold),var(--yellow));color:#fff;}
+
+/* PIPELINE KANBAN */
+.pipeline-board{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-bottom:16px;}
+.pipeline-col{background:var(--bg);border-radius:var(--radius);padding:12px;border:1px solid var(--border);min-height:320px;}
+.pipeline-col-hd{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;}
+.pipeline-col-title{font-size:11px;font-weight:700;color:var(--text2);letter-spacing:.5px;}
+.pipeline-count{font-size:10px;font-family:var(--fm);background:var(--white);border:1px solid var(--border);border-radius:10px;padding:1px 7px;color:var(--text2);}
+.pipeline-card{
+  background:var(--white);border:1px solid var(--border);border-radius:9px;
+  padding:11px 12px;margin-bottom:8px;
+  box-shadow:var(--shadow);transition:all .2s;cursor:pointer;
+  position:relative;overflow:hidden;
+}
+.pipeline-card::before{content:'';position:absolute;top:0;right:0;width:3px;height:100%;}
+.pipeline-card.c1::before{background:var(--text3);}
+.pipeline-card.c2::before{background:var(--blue);}
+.pipeline-card.c3::before{background:var(--yellow);}
+.pipeline-card.c4::before{background:var(--green);}
+.pipeline-card.c5::before{background:var(--purple);}
+.pipeline-card:hover{box-shadow:var(--shadow2);transform:translateY(-2px);}
+.pc-name{font-size:12px;font-weight:700;margin-bottom:4px;}
+.pc-prop{font-size:10px;color:var(--text2);margin-bottom:6px;}
+.pc-meta{display:flex;align-items:center;justify-content:space-between;font-size:10px;color:var(--text3);}
+.pc-amount{font-family:var(--fm);font-size:11px;font-weight:600;color:var(--blue);}
+
+/* CALENDAR */
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;}
+.cal-header{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin-bottom:6px;}
+.cal-day-name{text-align:center;font-size:10px;color:var(--text3);font-weight:700;padding:4px 0;}
+.cal-cell{
+  min-height:70px;background:var(--white);border:1px solid var(--border);
+  border-radius:8px;padding:5px;cursor:pointer;transition:all .2s;
+}
+.cal-cell:hover{border-color:var(--blue);background:rgba(49,130,206,.02);}
+.cal-cell.today{border-color:var(--blue);background:rgba(49,130,206,.04);}
+.cal-cell.other-month{opacity:.4;}
+.cal-num{font-size:11px;font-weight:700;margin-bottom:3px;font-family:var(--fm);}
+.cal-cell.today .cal-num{color:var(--blue);}
+.cal-event{font-size:8px;padding:1px 4px;border-radius:3px;margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.cal-event.install{background:rgba(56,161,105,.15);color:var(--green);}
+.cal-event.maint{background:rgba(49,130,206,.12);color:var(--blue);}
+.cal-event.visit{background:rgba(214,158,46,.15);color:var(--yellow);}
+
+/* FORM ELEMENTS */
+.form-grid-2{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.form-grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;}
+.form-group{display:flex;flex-direction:column;gap:5px;}
+.form-label{font-size:10px;color:var(--text2);font-family:var(--fm);letter-spacing:1px;font-weight:600;}
+.form-input,.form-select,.form-textarea{
+  background:var(--bg);border:1px solid var(--border);
+  border-radius:8px;padding:9px 12px;color:var(--text);
+  font-size:12px;font-family:var(--fa);outline:none;width:100%;
+  transition:border-color .2s;
+}
+.form-input:focus,.form-select:focus,.form-textarea:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(49,130,206,.08);}
+.form-input::placeholder,.form-textarea::placeholder{color:var(--text3);}
+.form-select option{background:#fff;}
+.form-textarea{resize:none;}
+
+/* STATUS STEPPER */
+.stepper{display:flex;align-items:center;margin-bottom:20px;}
+.step-item{display:flex;flex-direction:column;align-items:center;flex:1;}
+.step-circle{
+  width:34px;height:34px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  font-size:12px;font-weight:700;font-family:var(--fm);
+  border:2px solid var(--border);background:var(--white);color:var(--text3);
+  position:relative;z-index:1;transition:all .3s;
+}
+.step-item.done .step-circle{background:var(--green);border-color:var(--green);color:#fff;}
+.step-item.active .step-circle{background:var(--blue);border-color:var(--blue);color:#fff;box-shadow:0 0 0 4px rgba(49,130,206,.2);}
+.step-label{font-size:10px;color:var(--text3);margin-top:6px;text-align:center;}
+.step-item.done .step-label{color:var(--green);}
+.step-item.active .step-label{color:var(--blue);font-weight:700;}
+.step-line{flex:1;height:2px;background:var(--border);margin-bottom:18px;}
+.step-line.done{background:var(--green);}
+
+/* CERT PREVIEW */
+.cert-preview{
+  background:linear-gradient(135deg,#f8f4ee,#fff);
+  border:2px solid var(--gold);border-radius:14px;
+  padding:28px;text-align:center;position:relative;overflow:hidden;
+}
+.cert-preview::before{
+  content:'ATE';position:absolute;
+  font-family:var(--fe);font-size:120px;font-weight:900;
+  color:rgba(183,121,31,.04);top:50%;left:50%;
+  transform:translate(-50%,-50%);pointer-events:none;letter-spacing:10px;
+}
+.cert-watermark-top{
+  display:flex;align-items:center;justify-content:space-between;
+  margin-bottom:20px;
+}
+.cert-logo-area{display:flex;align-items:center;gap:8px;}
+.cert-logo-icon{width:36px;height:36px;background:linear-gradient(135deg,var(--red),var(--orange));border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:16px;}
+.cert-main-title{font-size:20px;font-weight:900;color:var(--gold);margin-bottom:4px;letter-spacing:1px;}
+.cert-sub-title{font-size:12px;color:var(--text2);margin-bottom:20px;}
+.cert-info-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:20px;text-align:right;}
+.cert-info-item{background:rgba(183,121,31,.06);border:1px solid rgba(183,121,31,.15);border-radius:8px;padding:10px;}
+.cert-info-label{font-size:9px;color:var(--gold);font-family:var(--fm);letter-spacing:1px;margin-bottom:3px;}
+.cert-info-val{font-size:12px;font-weight:700;}
+.cert-ref{font-family:var(--fm);font-size:18px;font-weight:700;color:var(--blue);letter-spacing:3px;background:rgba(49,130,206,.08);padding:8px 20px;border-radius:8px;display:inline-block;margin-bottom:16px;}
+.cert-footer-line{display:flex;justify-content:space-around;border-top:1px solid rgba(183,121,31,.2);padding-top:14px;}
+.cert-sign-area{text-align:center;}
+.cert-sign-label{font-size:9px;color:var(--text3);margin-bottom:4px;}
+.cert-sign-name{font-size:11px;font-weight:700;color:var(--text);}
+.cert-qr{width:50px;height:50px;background:linear-gradient(135deg,var(--text),var(--text2));border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:24px;}
+
+/* ACTIVITY FEED */
+.activity-item{display:flex;gap:10px;padding:10px 0;border-bottom:1px solid var(--border);}
+.activity-item:last-child{border-bottom:none;}
+.act-icon{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0;}
+.act-icon.green{background:rgba(56,161,105,.12);}
+.act-icon.blue{background:rgba(49,130,206,.1);}
+.act-icon.red{background:rgba(229,62,62,.1);}
+.act-icon.yellow{background:rgba(214,158,46,.1);}
+.act-icon.purple{background:rgba(128,90,213,.1);}
+.act-text{flex:1;}
+.act-title{font-size:12px;font-weight:700;margin-bottom:2px;}
+.act-desc{font-size:11px;color:var(--text2);}
+.act-time{font-size:9px;color:var(--text3);font-family:var(--fm);flex-shrink:0;margin-top:3px;}
+
+/* MODAL */
+.crm-overlay{position:fixed;inset:0;background:rgba(0,0,0,.45);backdrop-filter:blur(4px);z-index:9000;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .3s;}
+.crm-modal{background:var(--white);border-radius:16px;width:600px;max-width:94vw;max-height:90vh;overflow-y:auto;box-shadow:0 24px 60px rgba(0,0,0,.2);transform:scale(.94) translateY(16px);transition:all .35s cubic-bezier(.34,1.56,.64,1);}
+.crm-overlay.open{opacity:1;pointer-events:all;}
+.crm-overlay.open .crm-modal{transform:scale(1) translateY(0);}
+.modal-hd{padding:18px 22px 14px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;}
+.modal-title{font-size:15px;font-weight:700;}
+.modal-close{width:28px;height:28px;border-radius:50%;background:var(--bg);border:1px solid var(--border);cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;transition:all .2s;}
+.modal-close:hover{background:var(--red);color:#fff;border-color:var(--red);}
+.modal-body{padding:20px 22px;}
+.modal-footer{padding:14px 22px 18px;border-top:1px solid var(--border);display:flex;gap:10px;justify-content:flex-end;}
+
+/* SEARCH + FILTER BAR */
+.search-bar{display:flex;gap:10px;align-items:center;margin-bottom:16px;}
+.search-input-wrap{flex:1;display:flex;align-items:center;gap:8px;background:var(--white);border:1px solid var(--border);border-radius:9px;padding:9px 14px;}
+.search-input-wrap input{border:none;background:transparent;outline:none;font-size:13px;font-family:var(--fa);color:var(--text);width:100%;}
+.search-input-wrap input::placeholder{color:var(--text3);}
+.filter-chip{padding:7px 14px;border-radius:20px;border:1px solid var(--border);background:var(--white);font-size:11px;font-weight:700;color:var(--text2);cursor:pointer;transition:all .2s;}
+.filter-chip:hover,.filter-chip.active{background:var(--blue);color:#fff;border-color:var(--blue);}
+
+/* STAT BAR */
+.stat-bar{height:6px;border-radius:3px;background:var(--bg2);overflow:hidden;margin-top:4px;}
+.stat-bar-fill{height:100%;border-radius:3px;transition:width 1s ease;}
+
+/* TECH CARD */
+.tech-card{background:var(--white);border:1px solid var(--border);border-radius:var(--radius);padding:16px;box-shadow:var(--shadow);transition:all .2s;}
+.tech-card:hover{box-shadow:var(--shadow2);}
+.tc-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;}
+.tc-av{width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:700;color:#fff;flex-shrink:0;}
+
+/* RESPONSIVE */
+@media(max-width:1200px){.kpi-grid{grid-template-columns:repeat(2,1fr);}.pipeline-board{grid-template-columns:repeat(3,1fr);}}
+@media(max-width:900px){.crm-sidebar{width:200px;}.form-grid-3{grid-template-columns:1fr 1fr;}}
+
+/* SCROLLBAR */
+::-webkit-scrollbar{width:5px;height:5px;}
+::-webkit-scrollbar-track{background:var(--bg);}
+::-webkit-scrollbar-thumb{background:var(--bord2);border-radius:3px;}
+::-webkit-scrollbar-thumb:hover{background:var(--text3);}
+</style>
+</head>
+<body>
+<div class="crm-app">
+
+<!-- ══════════════════════════
+     SIDEBAR
+══════════════════════════ -->
+<aside class="crm-sidebar">
+  <div class="cs-logo">
+    <div class="cs-logo-icon">🔔</div>
+    <div class="cs-logo-text">
+      <div class="ate">ATE</div>
+      <div class="crm-sub">INTERNAL CRM</div>
+    </div>
+  </div>
+
+  <nav class="cs-nav">
+    <div class="cs-section-label"><span data-i18n="الرئيسية">الرئيسية</span></div>
+    <div class="cs-item active" onclick="showPage('pg-dash',this)"><span class="cs-icon">📊</span> لوحة التحكم</div>
+
+    <div class="cs-section-label"><span data-i18n="العمليات">العمليات</span></div>
+    <div class="cs-item" onclick="showPage('pg-clients',this)"><span class="cs-icon">👥</span> <span data-i18n="العملاء">العملاء</span><span class="cs-badge blue">248</span></div>
+    <div class="cs-item" onclick="showPage('pg-requests',this)"><span class="cs-icon">📋</span> <span data-i18n="الطلبات">الطلبات</span><span class="cs-badge red">12</span></div>
+    <div class="cs-item" onclick="showPage('pg-pipeline',this)"><span class="cs-icon">🔄</span> Pipeline</div>
+
+    <div class="cs-section-label"><span data-i18n="المالية">المالية</span></div>
+    <div class="cs-item" onclick="showPage('pg-invoices',this)"><span class="cs-icon">💰</span> <span data-i18n="الفواتير">الفواتير</span><span class="cs-badge yellow">8</span></div>
+    <div class="cs-item" onclick="showPage('pg-payments',this)"><span class="cs-icon">💳</span> المدفوعات</div>
+
+    <div class="cs-section-label"><span data-i18n="التشغيل">التشغيل</span></div>
+    <div class="cs-item" onclick="showPage('pg-schedule',this)"><span class="cs-icon">📅</span> الجدولة</div>
+    <div class="cs-item" onclick="showPage('pg-certs',this)"><span class="cs-icon">📜</span> <span data-i18n="الشهادات">الشهادات</span><span class="cs-badge green">3</span></div>
+    <div class="cs-item" onclick="showPage('pg-docs',this)"><span class="cs-icon">📁</span> <span data-i18n="المستندات">المستندات</span><span class="cs-badge red">5</span></div>
+
+    <div class="cs-section-label"><span data-i18n="الفريق">الفريق</span></div>
+    <div class="cs-item" onclick="showPage('pg-team',this)"><span class="cs-icon">👷</span> الفنيون</div>
+    <div class="cs-item" onclick="showPage('pg-reports',this)"><span class="cs-icon">📈</span> التقارير</div>
+  </nav>
+
+  <div class="cs-bottom">
+    <div class="cs-user">
+      <div class="cs-av">م</div>
+      <div><div class="cs-uname">محمد الأمير</div><div class="cs-urole">مدير النظام · Admin</div></div>
+    </div>
+  </div>
+</aside>
+
+<!-- ══════════════════════════
+     MAIN
+══════════════════════════ -->
+<main class="crm-main">
+
+  <!-- TOPBAR -->
+  <div class="crm-topbar">
+    <div class="crm-topbar-title"><span>ATE CRM /</span><span id="page-title-text">لوحة التحكم</span></div>
+    <div class="topbar-search">
+      <span style="color:var(--text3)">🔍</span>
+      <input placeholder="بحث — عميل، عقار، شهادة...">
+    </div>
+    <div class="topbar-btn" onclick="showToast('لا توجد إشعارات جديدة','info')">
+      🔔
+      <div class="topbar-notif">3</div>
+    </div>
+    <div class="topbar-btn" onclick="showToast('قريباً — الإعدادات','info')">⚙️</div>
+    <div id="lang-pill" style="display:flex;background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:2px;gap:2px">
+      <button id="btn-ar" onclick="setLang('ar')" style="padding:5px 13px;border-radius:6px;border:none;font-size:11px;font-weight:700;cursor:pointer;font-family:'Tajawal',sans-serif;background:var(--text);color:#fff;transition:all .2s">العربية</button>
+      <button id="btn-en" onclick="setLang('en')" style="padding:5px 13px;border-radius:6px;border:none;font-size:11px;font-weight:700;cursor:pointer;font-family:'Rajdhani',sans-serif;background:transparent;color:var(--text2);transition:all .2s">English</button>
+    </div>
+    <div style="width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--red),var(--orange));display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:#fff;cursor:pointer">م</div>
+  </div>
+
+  <div class="crm-content">
+
+  <!-- ════════════════════════════
+       1. DASHBOARD
+  ════════════════════════════ -->
+  <div class="crm-page active" id="pg-dash">
+
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px">
+      <div>
+        <div style="font-size:18px;font-weight:900"><span data-i18n="مرحباً، محمد 👋">مرحباً، محمد 👋</span></div>
+        <div style="font-size:12px;color:var(--text2);margin-top:2px"><span data-i18n="الأربعاء، 25 مارس 2026 · إليك ملخص اليوم">الأربعاء، 25 مارس 2026 · إليك ملخص اليوم</span></div>
+      </div>
+      <button class="btn btn-primary" onclick="openModal('modal-new-request')"><span data-i18n="＋ طلب جديد">＋ طلب جديد</span></button>
+    </div>
+
+    <!-- KPIs -->
+    <div class="kpi-grid">
+      <div class="kpi-card green">
+        <div class="kpi-top"><div class="kpi-icon green">👥</div><span class="kpi-change up">▲ +12 هذا الشهر</span></div>
+        <div class="kpi-val green">248</div><div class="kpi-lbl"><span data-i18n="إجمالي العملاء">إجمالي العملاء</span></div>
+      </div>
+      <div class="kpi-card red">
+        <div class="kpi-top"><div class="kpi-icon red">📋</div><span class="kpi-change neutral">12 طلب جديد</span></div>
+        <div class="kpi-val red">12</div><div class="kpi-lbl"><span data-i18n="طلبات بانتظار المعالجة">طلبات بانتظار المعالجة</span></div>
+      </div>
+      <div class="kpi-card yellow">
+        <div class="kpi-top"><div class="kpi-icon yellow">💰</div><span class="kpi-change down">8 فاتورة معلقة</span></div>
+        <div class="kpi-val yellow">80,000</div><div class="kpi-lbl"><span data-i18n="مبالغ مستحقة (درهم)">مبالغ مستحقة (درهم)</span></div>
+      </div>
+      <div class="kpi-card blue">
+        <div class="kpi-top"><div class="kpi-icon blue">📅</div><span class="kpi-change neutral"><span data-i18n="اليوم">اليوم</span></span></div>
+        <div class="kpi-val blue">7</div><div class="kpi-lbl"><span data-i18n="زيارات مجدولة اليوم">زيارات مجدولة اليوم</span></div>
+      </div>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin-bottom:16px">
+
+      <!-- Pipeline Summary -->
+      <div class="crm-panel">
+        <div class="crm-panel-hd">
+          <div class="crm-panel-title">🔄 حالة الطلبات</div>
+          <button class="btn btn-outline btn-sm" onclick="showPage('pg-pipeline',document.querySelector('[onclick*=pg-pipeline]'))"><span data-i18n="عرض الكل">عرض الكل</span></button>
+        </div>
+        <div class="crm-panel-body" style="display:flex;flex-direction:column;gap:10px">
+          <div>
+            <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:3px"><span style="color:var(--text2)"><span data-i18n="طلب جديد">طلب جديد</span></span><span style="font-weight:700;color:var(--text)">12</span></div>
+            <div class="stat-bar"><div class="stat-bar-fill" style="width:48%;background:var(--text3)"></div></div>
+          </div>
+          <div>
+            <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:3px"><span style="color:var(--text2)"><span data-i18n="بانتظار الدفع">بانتظار الدفع</span></span><span style="font-weight:700;color:var(--blue)">8</span></div>
+            <div class="stat-bar"><div class="stat-bar-fill" style="width:32%;background:var(--blue)"></div></div>
+          </div>
+          <div>
+            <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:3px"><span style="color:var(--text2)">مجدول للتركيب</span><span style="font-weight:700;color:var(--yellow)">15</span></div>
+            <div class="stat-bar"><div class="stat-bar-fill" style="width:60%;background:var(--yellow)"></div></div>
+          </div>
+          <div>
+            <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:3px"><span style="color:var(--text2)">تم التركيب</span><span style="font-weight:700;color:var(--orange)">6</span></div>
+            <div class="stat-bar"><div class="stat-bar-fill" style="width:24%;background:var(--orange)"></div></div>
+          </div>
+          <div>
+            <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:3px"><span style="color:var(--text2)"><span data-i18n="شهادة صادرة">شهادة صادرة</span></span><span style="font-weight:700;color:var(--green)">207</span></div>
+            <div class="stat-bar"><div class="stat-bar-fill" style="width:83%;background:var(--green)"></div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Today's Schedule -->
+      <div class="crm-panel">
+        <div class="crm-panel-hd">
+          <div class="crm-panel-title">📅 مواعيد اليوم</div>
+          <button class="btn btn-outline btn-sm" onclick="showPage('pg-schedule',document.querySelector('[onclick*=pg-schedule]'))"><span data-i18n="التقويم">التقويم</span></button>
+        </div>
+        <div class="crm-panel-body" style="display:flex;flex-direction:column;gap:8px">
+          <div style="display:flex;gap:9px;align-items:flex-start;padding:8px 0;border-bottom:1px solid var(--border)">
+            <div style="width:38px;text-align:center;flex-shrink:0"><div style="font-size:11px;font-weight:700;color:var(--blue);font-family:var(--fm)">09:00</div><div style="font-size:9px;color:var(--text3)">AM</div></div>
+            <div><div style="font-size:12px;font-weight:700">تركيب — مجمع الرياض A</div><div style="font-size:10px;color:var(--text2)">م. خالد · حي العليا</div></div>
+            <span class="badge badge-green" style="margin-right:auto;flex-shrink:0">✓ مؤكد</span>
+          </div>
+          <div style="display:flex;gap:9px;align-items:flex-start;padding:8px 0;border-bottom:1px solid var(--border)">
+            <div style="width:38px;text-align:center;flex-shrink:0"><div style="font-size:11px;font-weight:700;color:var(--blue);font-family:var(--fm)">11:30</div><div style="font-size:9px;color:var(--text3)">AM</div></div>
+            <div><div style="font-size:12px;font-weight:700">تركيب — برج الأعمال 7</div><div style="font-size:10px;color:var(--text2)">م. سالم · حي الملك فهد</div></div>
+            <span class="badge badge-green" style="margin-right:auto;flex-shrink:0">✓ مؤكد</span>
+          </div>
+          <div style="display:flex;gap:9px;align-items:flex-start;padding:8px 0;border-bottom:1px solid var(--border)">
+            <div style="width:38px;text-align:center;flex-shrink:0"><div style="font-size:11px;font-weight:700;color:var(--orange);font-family:var(--fm)">02:00</div><div style="font-size:9px;color:var(--text3)">PM</div></div>
+            <div><div style="font-size:12px;font-weight:700">صيانة — مجمع النور</div><div style="font-size:10px;color:var(--text2)">م. فهد · حي النزهة</div></div>
+            <span class="badge badge-yellow" style="margin-right:auto;flex-shrink:0">⏳ معلق</span>
+          </div>
+          <div style="display:flex;gap:9px;align-items:flex-start;padding:8px 0">
+            <div style="width:38px;text-align:center;flex-shrink:0"><div style="font-size:11px;font-weight:700;color:var(--blue);font-family:var(--fm)">04:30</div><div style="font-size:9px;color:var(--text3)">PM</div></div>
+            <div><div style="font-size:12px;font-weight:700">تركيب — مصنع الأمل</div><div style="font-size:10px;color:var(--text2)">م. أحمد · المنطقة الصناعية</div></div>
+            <span class="badge badge-green" style="margin-right:auto;flex-shrink:0">✓ مؤكد</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Activity Feed -->
+      <div class="crm-panel">
+        <div class="crm-panel-hd"><div class="crm-panel-title">⚡ آخر الأنشطة</div></div>
+        <div class="crm-panel-body" id="activity-feed">
+          <div class="activity-item"><div class="act-icon green">📜</div><div class="act-text"><div class="act-title">شهادة صادرة — مجمع الرياض B</div><div class="act-desc">REF: ATE-2026-0312 · تم الإرسال للعميل</div></div><div class="act-time">منذ 8د</div></div>
+          <div class="activity-item"><div class="act-icon blue">💳</div><div class="act-text"><div class="act-title">دفع مستلم — شركة النور</div><div class="act-desc">10,000 درهم · تحويل بنكي</div></div><div class="act-time">منذ 22د</div></div>
+          <div class="activity-item"><div class="act-icon yellow">📋</div><div class="act-text"><div class="act-title">طلب جديد — فندق الخليج</div><div class="act-desc">3 أجهزة · حي الملك عبدالعزيز</div></div><div class="act-time">منذ 1س</div></div>
+          <div class="activity-item"><div class="act-icon green">✅</div><div class="act-text"><div class="act-title">تركيب مكتمل — برج النخيل</div><div class="act-desc">م. خالد · 16 منطقة · اختبار ناجح</div></div><div class="act-time">منذ 2س</div></div>
+          <div class="activity-item"><div class="act-icon red">📁</div><div class="act-text"><div class="act-title">مستند مرفوع — شركة الأمان</div><div class="act-desc">عقد إيجار · ينتظر المراجعة</div></div><div class="act-time">منذ 3س</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Certs expiring + Pending docs -->
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+      <div class="crm-panel">
+        <div class="crm-panel-hd"><div class="crm-panel-title">⚠️ شهادات تنتهي قريباً</div><button class="btn btn-outline btn-sm" onclick="showPage('pg-certs',document.querySelector('[onclick*=pg-certs]'))"><span data-i18n="إدارة الشهادات">إدارة الشهادات</span></button></div>
+        <div style="overflow-x:auto">
+          <table class="crm-table">
+            <thead><tr><th><span data-i18n="العميل">العميل</span></th><th><span data-i18n="العقار">العقار</span></th><th><span data-i18n="تاريخ الانتهاء">تاريخ الانتهاء</span></th><th><span data-i18n="المتبقي">المتبقي</span></th><th><span data-i18n="إجراء">إجراء</span></th></tr></thead>
+            <tbody>
+              <tr onclick="showToast('عرض شهادة مجمع الأعمال B','info')"><td style="font-weight:700">شركة النور</td><td>مجمع الأعمال B</td><td style="font-family:var(--fm);font-size:10px">2026-04-15</td><td><span class="badge badge-red">22 يوم</span></td><td><button class="btn btn-warning btn-sm" onclick="event.stopPropagation();showPage('pg-certs',document.querySelector('[onclick*=pg-certs]'))">تجديد</button></td></tr>
+              <tr onclick="showToast('عرض شهادة مجمع C','info')"><td style="font-weight:700">فندق الخليج</td><td>مجمع C</td><td style="font-family:var(--fm);font-size:10px">2026-05-01</td><td><span class="badge badge-yellow">38 يوم</span></td><td><button class="btn btn-warning btn-sm" onclick="event.stopPropagation();showPage('pg-certs',document.querySelector('[onclick*=pg-certs]'))">تجديد</button></td></tr>
+              <tr onclick="showToast('عرض شهادة برج الأعمال','info')"><td style="font-weight:700">مجموعة الخليج</td><td>برج الأعمال 3</td><td style="font-family:var(--fm);font-size:10px">2026-05-18</td><td><span class="badge badge-yellow">55 يوم</span></td><td><button class="btn btn-outline btn-sm" onclick="event.stopPropagation()">عرض</button></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="crm-panel">
+        <div class="crm-panel-hd"><div class="crm-panel-title">📁 مستندات تنتظر المراجعة</div><button class="btn btn-outline btn-sm" onclick="showPage('pg-docs',document.querySelector('[onclick*=pg-docs]'))"><span data-i18n="إدارة المستندات">إدارة المستندات</span></button></div>
+        <div style="overflow-x:auto">
+          <table class="crm-table">
+            <thead><tr><th><span data-i18n="العميل">العميل</span></th><th>المستند</th><th><span data-i18n="تاريخ الرفع">تاريخ الرفع</span></th><th><span data-i18n="إجراء">إجراء</span></th></tr></thead>
+            <tbody>
+              <tr><td style="font-weight:700">شركة الأمان</td><td>عقد إيجار — مجمع B</td><td style="font-family:var(--fm);font-size:10px">2026-03-25</td><td style="display:flex;gap:5px"><button class="btn btn-success btn-sm" onclick="showToast('✅ تم قبول المستند','success')">قبول</button><button class="btn btn-outline btn-sm" onclick="showToast('تم الرفض وإرسال ملاحظة','warning')">رفض</button></td></tr>
+              <tr><td style="font-weight:700">فندق الخليج</td><td>هوية مفوّض التوقيع</td><td style="font-family:var(--fm);font-size:10px">2026-03-24</td><td style="display:flex;gap:5px"><button class="btn btn-success btn-sm" onclick="showToast('✅ تم قبول المستند','success')">قبول</button><button class="btn btn-outline btn-sm" onclick="showToast('تم الرفض وإرسال ملاحظة','warning')">رفض</button></td></tr>
+              <tr><td style="font-weight:700">مصنع الأمل</td><td>رخصة تجارية</td><td style="font-family:var(--fm);font-size:10px">2026-03-23</td><td style="display:flex;gap:5px"><button class="btn btn-success btn-sm" onclick="showToast('✅ تم قبول المستند','success')">قبول</button><button class="btn btn-outline btn-sm" onclick="showToast('تم الرفض وإرسال ملاحظة','warning')">رفض</button></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ════════════════════════════
+       2. CLIENTS
+  ════════════════════════════ -->
+  <div class="crm-page" id="pg-clients">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
+      <div style="font-size:15px;font-weight:900">👥 إدارة العملاء</div>
+      <button class="btn btn-primary" onclick="openModal('modal-new-client')"><span data-i18n="＋ عميل جديد">＋ عميل جديد</span></button>
+    </div>
+    <div class="search-bar">
+      <div class="search-input-wrap"><span style="color:var(--text3)">🔍</span><input placeholder="بحث بالاسم أو رقم الهاتف أو العقار..."></div>
+      <div class="filter-chip active">الكل</div>
+      <div class="filter-chip" onclick="toggleFilter(this)">نشط</div>
+      <div class="filter-chip" onclick="toggleFilter(this)">معلق</div>
+      <div class="filter-chip" onclick="toggleFilter(this)">شهادة منتهية</div>
+    </div>
+    <div class="crm-panel">
+      <div style="overflow-x:auto">
+        <table class="crm-table">
+          <thead><tr><th><span data-i18n="الكود">الكود</span></th><th><span data-i18n="اسم العميل / الشركة">اسم العميل / الشركة</span></th><th><span data-i18n="رقم التواصل">رقم التواصل</span></th><th><span data-i18n="عدد العقارات">عدد العقارات</span></th><th><span data-i18n="حالة الشهادة">حالة الشهادة</span></th><th><span data-i18n="آخر تواصل">آخر تواصل</span></th><th><span data-i18n="الحالة">الحالة</span></th><th><span data-i18n="إجراءات">إجراءات</span></th></tr></thead>
+          <tbody id="clients-tbody">
+            <tr onclick="openClientDetail('C-0001')"><td style="font-family:var(--fm);color:var(--blue);font-size:11px">C-0001</td><td><div style="font-weight:700">شركة النور للحماية</div><div style="font-size:10px;color:var(--text2)">أحمد محمد السعيد</div></td><td style="font-family:var(--fm);font-size:11px">0501234567</td><td style="font-weight:700;text-align:center">3</td><td><span class="badge badge-yellow">⚠ 22 يوم</span></td><td style="font-family:var(--fm);font-size:10px;color:var(--text3)">2026-03-20</td><td><span class="badge badge-green">● نشط</span></td><td onclick="event.stopPropagation()" style="display:flex;gap:5px"><button class="btn btn-outline btn-sm" onclick="openClientDetail('C-0001')">عرض</button><button class="btn btn-primary btn-sm" onclick="openModal('modal-new-cert')">شهادة</button></td></tr>
+            <tr onclick="openClientDetail('C-0002')"><td style="font-family:var(--fm);color:var(--blue);font-size:11px">C-0002</td><td><div style="font-weight:700">فندق الخليج الكبير</div><div style="font-size:10px;color:var(--text2)">سالم عبدالله الخليجي</div></td><td style="font-family:var(--fm);font-size:11px">0507654321</td><td style="font-weight:700;text-align:center">1</td><td><span class="badge badge-yellow">⚠ 38 يوم</span></td><td style="font-family:var(--fm);font-size:10px;color:var(--text3)">2026-03-22</td><td><span class="badge badge-green">● نشط</span></td><td onclick="event.stopPropagation()" style="display:flex;gap:5px"><button class="btn btn-outline btn-sm" onclick="openClientDetail('C-0002')">عرض</button><button class="btn btn-primary btn-sm" onclick="openModal('modal-new-cert')">شهادة</button></td></tr>
+            <tr onclick="openClientDetail('C-0003')"><td style="font-family:var(--fm);color:var(--blue);font-size:11px">C-0003</td><td><div style="font-weight:700">مجموعة الخليج العقارية</div><div style="font-size:10px;color:var(--text2)">فهد ناصر الخليج</div></td><td style="font-family:var(--fm);font-size:11px">0509876543</td><td style="font-weight:700;text-align:center">5</td><td><span class="badge badge-green">● 180 يوم</span></td><td style="font-family:var(--fm);font-size:10px;color:var(--text3)">2026-03-24</td><td><span class="badge badge-green">● نشط</span></td><td onclick="event.stopPropagation()" style="display:flex;gap:5px"><button class="btn btn-outline btn-sm" onclick="openClientDetail('C-0003')">عرض</button><button class="btn btn-primary btn-sm" onclick="openModal('modal-new-cert')">شهادة</button></td></tr>
+            <tr onclick="openClientDetail('C-0004')"><td style="font-family:var(--fm);color:var(--blue);font-size:11px">C-0004</td><td><div style="font-weight:700">مصنع الأمل الصناعي</div><div style="font-size:10px;color:var(--text2)">خالد محمد الشمري</div></td><td style="font-family:var(--fm);font-size:11px">0512345678</td><td style="font-weight:700;text-align:center">1</td><td><span class="badge badge-gray">— معلق</span></td><td style="font-family:var(--fm);font-size:10px;color:var(--text3)">2026-03-18</td><td><span class="badge badge-yellow">⏳ قيد التركيب</span></td><td onclick="event.stopPropagation()" style="display:flex;gap:5px"><button class="btn btn-outline btn-sm" onclick="openClientDetail('C-0004')">عرض</button><button class="btn btn-success btn-sm" onclick="openModal('modal-new-request')">طلب</button></td></tr>
+            <tr onclick="openClientDetail('C-0005')"><td style="font-family:var(--fm);color:var(--blue);font-size:11px">C-0005</td><td><div style="font-weight:700">شركة الأمان للحماية</div><div style="font-size:10px;color:var(--text2)">عبدالله سالم العمري</div></td><td style="font-family:var(--fm);font-size:11px">0556789012</td><td style="font-weight:700;text-align:center">3</td><td><span class="badge badge-red">✕ منتهية</span></td><td style="font-family:var(--fm);font-size:10px;color:var(--text3)">2026-03-10</td><td><span class="badge badge-red">⚠ منتهية</span></td><td onclick="event.stopPropagation()" style="display:flex;gap:5px"><button class="btn btn-outline btn-sm">عرض</button><button class="btn btn-danger btn-sm" onclick="openModal('modal-new-cert')">تجديد</button></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div style="padding:10px 18px;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;font-size:11px;color:var(--text3)">
+        <span>عرض 5 من 248 عميل</span>
+        <div style="display:flex;gap:5px">
+          <button class="btn btn-outline btn-sm">السابق</button>
+          <button class="btn btn-primary btn-sm">1</button>
+          <button class="btn btn-outline btn-sm">2</button>
+          <button class="btn btn-outline btn-sm">3</button>
+          <button class="btn btn-outline btn-sm">التالي</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ════════════════════════════
+       3. REQUESTS
+  ════════════════════════════ -->
+  <div class="crm-page" id="pg-requests">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
+      <div style="font-size:15px;font-weight:900">📋 الطلبات الواردة</div>
+      <button class="btn btn-primary" onclick="openModal('modal-new-request')"><span data-i18n="＋ طلب جديد">＋ طلب جديد</span></button>
+    </div>
+    <!-- Stepper stats -->
+    <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:16px">
+      <div style="background:var(--white);border:1px solid var(--border);border-radius:var(--radius);padding:14px;text-align:center;box-shadow:var(--shadow)">
+        <div style="font-size:22px;font-weight:700;font-family:var(--fe);color:var(--text3)">12</div>
+        <div style="font-size:11px;color:var(--text2);margin-top:2px"><span data-i18n="طلب جديد">طلب جديد</span></div>
+        <div style="height:3px;background:var(--text3);border-radius:2px;margin-top:8px"></div>
+      </div>
+      <div style="background:var(--white);border:1px solid var(--border);border-radius:var(--radius);padding:14px;text-align:center;box-shadow:var(--shadow)">
+        <div style="font-size:22px;font-weight:700;font-family:var(--fe);color:var(--blue)">8</div>
+        <div style="font-size:11px;color:var(--text2);margin-top:2px"><span data-i18n="بانتظار الدفع">بانتظار الدفع</span></div>
+        <div style="height:3px;background:var(--blue);border-radius:2px;margin-top:8px"></div>
+      </div>
+      <div style="background:var(--white);border:1px solid var(--border);border-radius:var(--radius);padding:14px;text-align:center;box-shadow:var(--shadow)">
+        <div style="font-size:22px;font-weight:700;font-family:var(--fe);color:var(--yellow)">15</div>
+        <div style="font-size:11px;color:var(--text2);margin-top:2px">مجدول للتركيب</div>
+        <div style="height:3px;background:var(--yellow);border-radius:2px;margin-top:8px"></div>
+      </div>
+      <div style="background:var(--white);border:1px solid var(--border);border-radius:var(--radius);padding:14px;text-align:center;box-shadow:var(--shadow)">
+        <div style="font-size:22px;font-weight:700;font-family:var(--fe);color:var(--orange)">6</div>
+        <div style="font-size:11px;color:var(--text2);margin-top:2px">تم التركيب</div>
+        <div style="height:3px;background:var(--orange);border-radius:2px;margin-top:8px"></div>
+      </div>
+      <div style="background:var(--white);border:1px solid var(--border);border-radius:var(--radius);padding:14px;text-align:center;box-shadow:var(--shadow)">
+        <div style="font-size:22px;font-weight:700;font-family:var(--fe);color:var(--green)">207</div>
+        <div style="font-size:11px;color:var(--text2);margin-top:2px"><span data-i18n="شهادة صادرة">شهادة صادرة</span></div>
+        <div style="height:3px;background:var(--green);border-radius:2px;margin-top:8px"></div>
+      </div>
+    </div>
+
+    <div class="crm-panel">
+      <div style="overflow-x:auto">
+        <table class="crm-table">
+          <thead><tr><th><span data-i18n="رقم الطلب">رقم الطلب</span></th><th><span data-i18n="العميل">العميل</span></th><th><span data-i18n="العقار">العقار</span></th><th><span data-i18n="عدد الأجهزة">عدد الأجهزة</span></th><th><span data-i18n="القيمة">القيمة</span></th><th><span data-i18n="تاريخ الطلب">تاريخ الطلب</span></th><th><span data-i18n="المرحلة">المرحلة</span></th><th><span data-i18n="إجراءات">إجراءات</span></th></tr></thead>
+          <tbody>
+            <tr onclick="openModal('modal-request-detail')"><td style="font-family:var(--fm);color:var(--blue);font-size:11px">REQ-2026-0412</td><td style="font-weight:700">فندق الخليج الكبير</td><td>المبنى الرئيسي</td><td style="text-align:center;font-weight:700">1</td><td style="font-family:var(--fe);font-weight:700;color:var(--blue)">10,000 د</td><td style="font-family:var(--fm);font-size:10px">2026-03-25</td><td><span class="badge badge-gray">① طلب جديد</span></td><td onclick="event.stopPropagation()" style="display:flex;gap:4px"><button class="btn btn-primary btn-sm" onclick="showToast('تم إنشاء الفاتورة','success')">فاتورة</button><button class="btn btn-outline btn-sm">تفاصيل</button></td></tr>
+            <tr onclick="openModal('modal-request-detail')"><td style="font-family:var(--fm);color:var(--blue);font-size:11px">REQ-2026-0411</td><td style="font-weight:700">مصنع الأمل الصناعي</td><td>المصنع الرئيسي</td><td style="text-align:center;font-weight:700">1</td><td style="font-family:var(--fe);font-weight:700;color:var(--blue)">10,000 د</td><td style="font-family:var(--fm);font-size:10px">2026-03-24</td><td><span class="badge badge-blue">② بانتظار الدفع</span></td><td onclick="event.stopPropagation()" style="display:flex;gap:4px"><button class="btn btn-success btn-sm" onclick="showToast('تم تسجيل الدفع ✅','success')">دفع مستلم</button><button class="btn btn-outline btn-sm">تفاصيل</button></td></tr>
+            <tr onclick="openModal('modal-request-detail')"><td style="font-family:var(--fm);color:var(--blue);font-size:11px">REQ-2026-0409</td><td style="font-weight:700">شركة الأمان للحماية</td><td>مجمع B</td><td style="text-align:center;font-weight:700">1</td><td style="font-family:var(--fe);font-weight:700;color:var(--blue)">10,000 د</td><td style="font-family:var(--fm);font-size:10px">2026-03-22</td><td><span class="badge badge-yellow">③ مجدول للتركيب</span></td><td onclick="event.stopPropagation()" style="display:flex;gap:4px"><button class="btn btn-warning btn-sm" onclick="showPage('pg-schedule',document.querySelector('[onclick*=pg-schedule]'))">جدولة</button><button class="btn btn-outline btn-sm">تفاصيل</button></td></tr>
+            <tr onclick="openModal('modal-request-detail')"><td style="font-family:var(--fm);color:var(--blue);font-size:11px">REQ-2026-0405</td><td style="font-weight:700">مجموعة الخليج العقارية</td><td>برج 3</td><td style="text-align:center;font-weight:700">1</td><td style="font-family:var(--fe);font-weight:700;color:var(--blue)">10,000 د</td><td style="font-family:var(--fm);font-size:10px">2026-03-18</td><td><span class="badge badge-orange">④ تم التركيب</span></td><td onclick="event.stopPropagation()" style="display:flex;gap:4px"><button class="btn btn-gold btn-sm" onclick="openModal('modal-new-cert')">إصدار شهادة</button><button class="btn btn-outline btn-sm">تفاصيل</button></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ════════════════════════════
+       4. PIPELINE
+  ════════════════════════════ -->
+  <div class="crm-page" id="pg-pipeline">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
+      <div style="font-size:15px;font-weight:900">🔄 Pipeline — مسار الطلبات</div>
+      <button class="btn btn-primary" onclick="openModal('modal-new-request')"><span data-i18n="＋ طلب جديد">＋ طلب جديد</span></button>
+    </div>
+    <div class="pipeline-board">
+      <!-- COL 1 -->
+      <div class="pipeline-col">
+        <div class="pipeline-col-hd"><span class="pipeline-col-title"><span data-i18n="① طلب جديد">① طلب جديد</span></span><span class="pipeline-count">12</span></div>
+        <div class="pipeline-card c1" onclick="openModal('modal-request-detail')"><div class="pc-name">فندق الخليج الكبير</div><div class="pc-prop">المبنى الرئيسي · حي الملك فهد</div><div class="pc-meta"><span>2026-03-25</span><span class="pc-amount">10,000 د</span></div></div>
+        <div class="pipeline-card c1" onclick="openModal('modal-request-detail')"><div class="pc-name">مستودع النور</div><div class="pc-prop">مستودع رقم 7 · المنطقة الصناعية</div><div class="pc-meta"><span>2026-03-24</span><span class="pc-amount">10,000 د</span></div></div>
+        <div class="pipeline-card c1" onclick="openModal('modal-request-detail')"><div class="pc-name">مطعم الروضة</div><div class="pc-prop">الفرع الرئيسي · حي الروضة</div><div class="pc-meta"><span>2026-03-23</span><span class="pc-amount">10,000 د</span></div></div>
+      </div>
+      <!-- COL 2 -->
+      <div class="pipeline-col">
+        <div class="pipeline-col-hd"><span class="pipeline-col-title"><span data-i18n="② بانتظار الدفع">② بانتظار الدفع</span></span><span class="pipeline-count">8</span></div>
+        <div class="pipeline-card c2" onclick="openModal('modal-request-detail')"><div class="pc-name">مصنع الأمل الصناعي</div><div class="pc-prop">المصنع الرئيسي · المنطقة الصناعية</div><div class="pc-meta"><span>2026-03-24</span><span class="pc-amount">10,000 د</span></div></div>
+        <div class="pipeline-card c2" onclick="openModal('modal-request-detail')"><div class="pc-name">عيادة الشفاء</div><div class="pc-prop">المبنى الطبي · حي العليا</div><div class="pc-meta"><span>2026-03-22</span><span class="pc-amount">10,000 د</span></div></div>
+        <div class="pipeline-card c2" onclick="openModal('modal-request-detail')"><div class="pc-name">شركة التقنية المتقدمة</div><div class="pc-prop">المقر الرئيسي · حي المرسلات</div><div class="pc-meta"><span>2026-03-20</span><span class="pc-amount">10,000 د</span></div></div>
+      </div>
+      <!-- COL 3 -->
+      <div class="pipeline-col">
+        <div class="pipeline-col-hd"><span class="pipeline-col-title"><span data-i18n="③ مجدول للتركيب">③ مجدول للتركيب</span></span><span class="pipeline-count">15</span></div>
+        <div class="pipeline-card c3" onclick="openModal('modal-request-detail')"><div class="pc-name">شركة الأمان للحماية</div><div class="pc-prop">مجمع B · حي الملك فهد</div><div class="pc-meta"><span>28 مارس</span><span class="pc-amount badge badge-yellow" style="font-size:9px">م. خالد</span></div></div>
+        <div class="pipeline-card c3" onclick="openModal('modal-request-detail')"><div class="pc-name">برج الأعمال 7</div><div class="pc-prop">الطابق كامل · حي العليا</div><div class="pc-meta"><span>29 مارس</span><span class="pc-amount badge badge-yellow" style="font-size:9px">م. سالم</span></div></div>
+        <div class="pipeline-card c3" onclick="openModal('modal-request-detail')"><div class="pc-name">مركز التسوق الأمل</div><div class="pc-prop">البدروم + الأرضي</div><div class="pc-meta"><span>30 مارس</span><span class="pc-amount badge badge-yellow" style="font-size:9px">م. فهد</span></div></div>
+      </div>
+      <!-- COL 4 -->
+      <div class="pipeline-col">
+        <div class="pipeline-col-hd"><span class="pipeline-col-title"><span data-i18n="④ تم التركيب">④ تم التركيب</span></span><span class="pipeline-count">6</span></div>
+        <div class="pipeline-card c4" onclick="openModal('modal-new-cert')"><div class="pc-name">مجموعة الخليج العقارية</div><div class="pc-prop">برج 3 · حي السليمانية</div><div class="pc-meta"><span>تركيب ✓</span><span class="pc-amount badge badge-green" style="font-size:9px">إصدار شهادة</span></div></div>
+        <div class="pipeline-card c4" onclick="openModal('modal-new-cert')"><div class="pc-name">مستشفى الرعاية</div><div class="pc-prop">المبنى الإداري</div><div class="pc-meta"><span>تركيب ✓</span><span class="pc-amount badge badge-green" style="font-size:9px">إصدار شهادة</span></div></div>
+      </div>
+      <!-- COL 5 -->
+      <div class="pipeline-col">
+        <div class="pipeline-col-hd"><span class="pipeline-col-title"><span data-i18n="⑤ شهادة صادرة">⑤ شهادة صادرة</span></span><span class="pipeline-count">207</span></div>
+        <div class="pipeline-card c5"><div class="pc-name">شركة النور للحماية</div><div class="pc-prop">مجمع A · ATE-2026-0311</div><div class="pc-meta"><span>2026-03-20</span><span class="badge badge-purple" style="font-size:9px">✓ مكتمل</span></div></div>
+        <div class="pipeline-card c5"><div class="pc-name">فندق الأندلس</div><div class="pc-prop">المبنى الرئيسي · ATE-2026-0298</div><div class="pc-meta"><span>2026-03-18</span><span class="badge badge-purple" style="font-size:9px">✓ مكتمل</span></div></div>
+        <div class="pipeline-card c5"><div class="pc-name">مجمع الرياض B</div><div class="pc-prop">ATE-2026-0312</div><div class="pc-meta"><span>2026-03-24</span><span class="badge badge-purple" style="font-size:9px">✓ مكتمل</span></div></div>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ════════════════════════════
+       5. INVOICES
+  ════════════════════════════ -->
+  <div class="crm-page" id="pg-invoices">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
+      <div style="font-size:15px;font-weight:900">💰 الفواتير</div>
+      <button class="btn btn-primary" onclick="openModal('modal-new-invoice')"><span data-i18n="＋ فاتورة جديدة">＋ فاتورة جديدة</span></button>
+    </div>
+    <div class="kpi-grid" style="grid-template-columns:repeat(3,1fr)">
+      <div class="kpi-card green"><div class="kpi-top"><div class="kpi-icon green">✅</div><span class="kpi-change up">+40,000 هذا الشهر</span></div><div class="kpi-val green">480,000</div><div class="kpi-lbl"><span data-i18n="إجمالي المحصّل (درهم)">إجمالي المحصّل (درهم)</span></div></div>
+      <div class="kpi-card yellow"><div class="kpi-top"><div class="kpi-icon yellow">⏳</div><span class="kpi-change neutral">8 فاتورة</span></div><div class="kpi-val yellow">80,000</div><div class="kpi-lbl"><span data-i18n="مستحق التحصيل (درهم)">مستحق التحصيل (درهم)</span></div></div>
+      <div class="kpi-card blue"><div class="kpi-top"><div class="kpi-icon blue">📅</div><span class="kpi-change neutral">2026-04-01</span></div><div class="kpi-val blue">30,000</div><div class="kpi-lbl"><span data-i18n="متوقع هذا الشهر (درهم)">متوقع هذا الشهر (درهم)</span></div></div>
+    </div>
+    <div class="crm-panel">
+      <div class="crm-panel-hd"><div class="crm-panel-title">سجل الفواتير</div><div style="display:flex;gap:8px"><button class="btn btn-outline btn-sm" onclick="showToast('جارٍ تصدير التقرير...','info')">⬇ تصدير</button></div></div>
+      <div style="overflow-x:auto">
+        <table class="crm-table">
+          <thead><tr><th><span data-i18n="رقم الفاتورة">رقم الفاتورة</span></th><th><span data-i18n="العميل">العميل</span></th><th><span data-i18n="العقار">العقار</span></th><th><span data-i18n="القيمة">القيمة</span></th><th><span data-i18n="تاريخ الإصدار">تاريخ الإصدار</span></th><th><span data-i18n="تاريخ الاستحقاق">تاريخ الاستحقاق</span></th><th><span data-i18n="الحالة">الحالة</span></th><th><span data-i18n="إجراءات">إجراءات</span></th></tr></thead>
+          <tbody>
+            <tr><td style="font-family:var(--fm);color:var(--blue);font-size:11px">INV-2026-0412</td><td style="font-weight:700">فندق الخليج الكبير</td><td>المبنى الرئيسي</td><td style="font-family:var(--fe);font-weight:700;color:var(--blue)">10,000 د</td><td style="font-family:var(--fm);font-size:10px">2026-03-25</td><td style="font-family:var(--fm);font-size:10px;color:var(--yellow)">2026-04-01</td><td><span class="badge badge-yellow">⏳ مستحقة</span></td><td style="display:flex;gap:4px"><button class="btn btn-success btn-sm" onclick="showToast('✅ تم تسجيل الدفع','success')">تسجيل دفع</button><button class="btn btn-outline btn-sm" onclick="showToast('جارٍ تحميل PDF','info')">PDF</button></td></tr>
+            <tr><td style="font-family:var(--fm);color:var(--blue);font-size:11px">INV-2026-0411</td><td style="font-weight:700">مصنع الأمل الصناعي</td><td>المصنع الرئيسي</td><td style="font-family:var(--fe);font-weight:700;color:var(--blue)">10,000 د</td><td style="font-family:var(--fm);font-size:10px">2026-03-24</td><td style="font-family:var(--fm);font-size:10px;color:var(--yellow)">2026-03-31</td><td><span class="badge badge-yellow">⏳ مستحقة</span></td><td style="display:flex;gap:4px"><button class="btn btn-success btn-sm" onclick="showToast('✅ تم تسجيل الدفع','success')">تسجيل دفع</button><button class="btn btn-outline btn-sm" onclick="showToast('جارٍ تحميل PDF','info')">PDF</button></td></tr>
+            <tr><td style="font-family:var(--fm);color:var(--blue);font-size:11px">INV-2026-0408</td><td style="font-weight:700">شركة الأمان للحماية</td><td>مجمع B</td><td style="font-family:var(--fe);font-weight:700;color:var(--blue)">10,000 د</td><td style="font-family:var(--fm);font-size:10px">2026-03-20</td><td style="font-family:var(--fm);font-size:10px">2026-03-27</td><td><span class="badge badge-green">✓ مدفوعة</span></td><td style="display:flex;gap:4px"><button class="btn btn-outline btn-sm" onclick="showToast('جارٍ تحميل PDF','info')">PDF</button><button class="btn btn-outline btn-sm" onclick="showToast('جارٍ تحميل الإيصال','info')">إيصال</button></td></tr>
+            <tr><td style="font-family:var(--fm);color:var(--blue);font-size:11px">INV-2026-0399</td><td style="font-weight:700">مجموعة الخليج العقارية</td><td>برج 3</td><td style="font-family:var(--fe);font-weight:700;color:var(--blue)">10,000 د</td><td style="font-family:var(--fm);font-size:10px">2026-03-15</td><td style="font-family:var(--fm);font-size:10px">2026-03-22</td><td><span class="badge badge-green">✓ مدفوعة</span></td><td style="display:flex;gap:4px"><button class="btn btn-outline btn-sm" onclick="showToast('جارٍ تحميل PDF','info')">PDF</button><button class="btn btn-outline btn-sm" onclick="showToast('جارٍ تحميل الإيصال','info')">إيصال</button></td></tr>
+            <tr><td style="font-family:var(--fm);color:var(--blue);font-size:11px">INV-2026-0388</td><td style="font-weight:700">عيادة الشفاء</td><td>المبنى الطبي</td><td style="font-family:var(--fe);font-weight:700;color:var(--blue)">10,000 د</td><td style="font-family:var(--fm);font-size:10px">2026-03-10</td><td style="font-family:var(--fm);font-size:10px;color:var(--red)">2026-03-17</td><td><span class="badge badge-red">⚠ متأخرة</span></td><td style="display:flex;gap:4px"><button class="btn btn-success btn-sm" onclick="showToast('✅ تم تسجيل الدفع','success')">تسجيل دفع</button><button class="btn btn-outline btn-sm" onclick="showToast('تم إرسال تذكير واتساب','success')">📲 تذكير</button></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ════════════════════════════
+       6. SCHEDULE
+  ════════════════════════════ -->
+  <div class="crm-page" id="pg-schedule">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
+      <div style="font-size:15px;font-weight:900">📅 جدولة التركيب والصيانة</div>
+      <button class="btn btn-primary" onclick="openModal('modal-new-schedule')"><span data-i18n="＋ جدولة زيارة">＋ جدولة زيارة</span></button>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 300px;gap:16px">
+      <div class="crm-panel" style="margin-bottom:0">
+        <div class="crm-panel-hd">
+          <div class="crm-panel-title">📅 مارس 2026</div>
+          <div style="display:flex;gap:6px">
+            <button class="btn btn-outline btn-sm" onclick="showToast('الشهر السابق','info')">‹</button>
+            <button class="btn btn-primary btn-sm"><span data-i18n="اليوم">اليوم</span></button>
+            <button class="btn btn-outline btn-sm" onclick="showToast('الشهر التالي','info')">›</button>
+          </div>
+        </div>
+        <div class="crm-panel-body">
+          <div class="cal-header">
+            <div class="cal-day-name"><span data-i18n="أحد">أحد</span></div><div class="cal-day-name"><span data-i18n="إثنين">إثنين</span></div>
+            <div class="cal-day-name"><span data-i18n="ثلاثاء">ثلاثاء</span></div><div class="cal-day-name"><span data-i18n="أربعاء">أربعاء</span></div>
+            <div class="cal-day-name"><span data-i18n="خميس">خميس</span></div><div class="cal-day-name"><span data-i18n="جمعة">جمعة</span></div>
+            <div class="cal-day-name"><span data-i18n="سبت">سبت</span></div>
+          </div>
+          <div class="cal-grid" id="cal-grid"></div>
+        </div>
+      </div>
+
+      <div style="display:flex;flex-direction:column;gap:12px">
+        <div class="crm-panel" style="margin-bottom:0">
+          <div class="crm-panel-hd" style="padding:12px 14px"><div class="crm-panel-title" style="font-size:12px">👷 الفنيون المتاحون اليوم</div></div>
+          <div class="crm-panel-body" style="padding:10px 14px;display:flex;flex-direction:column;gap:8px">
+            <div style="display:flex;align-items:center;gap:8px"><div style="width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,var(--blue),var(--cyan));display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff;flex-shrink:0">خ</div><div style="flex:1"><div style="font-size:11px;font-weight:700">خالد الشهري</div><div style="font-size:9px;color:var(--text3)">2 زيارة مكتملة</div></div><span class="badge badge-green">متاح</span></div>
+            <div style="display:flex;align-items:center;gap:8px"><div style="width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,var(--yellow),var(--orange));display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff;flex-shrink:0">س</div><div style="flex:1"><div style="font-size:11px;font-weight:700">سالم العمري</div><div style="font-size:9px;color:var(--text3)">في الطريق</div></div><span class="badge badge-yellow">مشغول</span></div>
+            <div style="display:flex;align-items:center;gap:8px"><div style="width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,var(--green),var(--cyan));display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff;flex-shrink:0">ف</div><div style="flex:1"><div style="font-size:11px;font-weight:700">فهد الزهراني</div><div style="font-size:9px;color:var(--text3)">انتهى توه</div></div><span class="badge badge-green">متاح</span></div>
+            <div style="display:flex;align-items:center;gap:8px"><div style="width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,#6c5ce7,#a29bfe);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff;flex-shrink:0">أ</div><div style="flex:1"><div style="font-size:11px;font-weight:700">أحمد الدوسري</div><div style="font-size:9px;color:var(--text3)">زيارة الآن</div></div><span class="badge badge-yellow">مشغول</span></div>
+          </div>
+        </div>
+
+        <div class="crm-panel" style="margin-bottom:0">
+          <div class="crm-panel-hd" style="padding:12px 14px"><div class="crm-panel-title" style="font-size:12px">📋 زيارات اليوم</div></div>
+          <div class="crm-panel-body" style="padding:10px 14px;display:flex;flex-direction:column;gap:6px">
+            <div style="padding:8px 10px;background:rgba(56,161,105,.06);border:1px solid rgba(56,161,105,.2);border-radius:7px"><div style="font-size:11px;font-weight:700">09:00 — مجمع الرياض A</div><div style="font-size:9px;color:var(--text2)">تركيب · م. خالد</div></div>
+            <div style="padding:8px 10px;background:rgba(56,161,105,.06);border:1px solid rgba(56,161,105,.2);border-radius:7px"><div style="font-size:11px;font-weight:700">11:30 — برج الأعمال 7</div><div style="font-size:9px;color:var(--text2)">تركيب · م. سالم</div></div>
+            <div style="padding:8px 10px;background:rgba(214,158,46,.06);border:1px solid rgba(214,158,46,.2);border-radius:7px"><div style="font-size:11px;font-weight:700">14:00 — مجمع النور</div><div style="font-size:9px;color:var(--text2)">صيانة · م. فهد</div></div>
+            <div style="padding:8px 10px;background:rgba(56,161,105,.06);border:1px solid rgba(56,161,105,.2);border-radius:7px"><div style="font-size:11px;font-weight:700">16:30 — مصنع الأمل</div><div style="font-size:9px;color:var(--text2)">تركيب · م. أحمد</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ════════════════════════════
+       7. CERTIFICATES
+  ════════════════════════════ -->
+  <div class="crm-page" id="pg-certs">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
+      <div style="font-size:15px;font-weight:900">📜 إصدار وإدارة الشهادات</div>
+      <button class="btn btn-gold" onclick="openModal('modal-new-cert')"><span data-i18n="＋ إصدار شهادة جديدة">＋ إصدار شهادة جديدة</span></button>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+
+      <!-- CERT LIST -->
+      <div>
+        <div class="crm-panel">
+          <div class="crm-panel-hd"><div class="crm-panel-title">سجل الشهادات الصادرة</div></div>
+          <div style="overflow-x:auto">
+            <table class="crm-table">
+              <thead><tr><th><span data-i18n="رقم الشهادة">رقم الشهادة</span></th><th><span data-i18n="العميل">العميل</span></th><th><span data-i18n="تاريخ الإصدار">تاريخ الإصدار</span></th><th>الانتهاء</th><th><span data-i18n="الحالة">الحالة</span></th><th><span data-i18n="إجراء">إجراء</span></th></tr></thead>
+              <tbody>
+                <tr onclick="previewCert('ATE-2026-0312')"><td style="font-family:var(--fm);color:var(--gold);font-size:11px;font-weight:700">ATE-2026-0312</td><td style="font-weight:700">شركة النور</td><td style="font-family:var(--fm);font-size:10px">2026-03-20</td><td style="font-family:var(--fm);font-size:10px;color:var(--green)">2027-03-20</td><td><span class="badge badge-green">● سارية</span></td><td style="display:flex;gap:4px"><button class="btn btn-outline btn-sm" onclick="event.stopPropagation();showToast('جارٍ تحميل الشهادة','info')">PDF</button></td></tr>
+                <tr onclick="previewCert('ATE-2026-0308')"><td style="font-family:var(--fm);color:var(--gold);font-size:11px;font-weight:700">ATE-2026-0308</td><td style="font-weight:700">فندق الأندلس</td><td style="font-family:var(--fm);font-size:10px">2026-03-18</td><td style="font-family:var(--fm);font-size:10px;color:var(--green)">2027-03-18</td><td><span class="badge badge-green">● سارية</span></td><td style="display:flex;gap:4px"><button class="btn btn-outline btn-sm" onclick="event.stopPropagation();showToast('جارٍ تحميل الشهادة','info')">PDF</button></td></tr>
+                <tr onclick="previewCert('ATE-2025-0089')"><td style="font-family:var(--fm);color:var(--gold);font-size:11px;font-weight:700">ATE-2025-0089</td><td style="font-weight:700">فندق الخليج</td><td style="font-family:var(--fm);font-size:10px">2025-04-15</td><td style="font-family:var(--fm);font-size:10px;color:var(--yellow)">2026-04-15</td><td><span class="badge badge-yellow">⚠ 22 يوم</span></td><td style="display:flex;gap:4px"><button class="btn btn-warning btn-sm" onclick="event.stopPropagation();openModal('modal-new-cert')">تجديد</button></td></tr>
+                <tr onclick="previewCert('ATE-2025-0072')"><td style="font-family:var(--fm);color:var(--gold);font-size:11px;font-weight:700">ATE-2025-0072</td><td style="font-weight:700">شركة الأمان</td><td style="font-family:var(--fm);font-size:10px">2025-03-01</td><td style="font-family:var(--fm);font-size:10px;color:var(--red)">2026-03-01</td><td><span class="badge badge-red">✕ منتهية</span></td><td style="display:flex;gap:4px"><button class="btn btn-danger btn-sm" onclick="event.stopPropagation();openModal('modal-new-cert')">تجديد</button></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- CERT PREVIEW -->
+      <div>
+        <div class="cert-preview" id="cert-preview-box">
+          <div class="cert-watermark-top">
+            <div class="cert-logo-area">
+              <div class="cert-logo-icon">🔔</div>
+              <div><div style="font-family:var(--fe);font-size:14px;font-weight:700;letter-spacing:2px;color:var(--text)">ATE</div><div style="font-size:8px;color:var(--text2)">Alarm Transmission System</div></div>
+            </div>
+            <div style="text-align:left"><div style="font-size:9px;color:var(--text3);font-family:var(--fm)">CERTIFICATE OF INSTALLATION</div><div class="cert-qr">📱</div></div>
+          </div>
+          <div class="cert-main-title"><span data-i18n="شهادة تركيب وتشغيل">شهادة تركيب وتشغيل</span></div>
+          <div class="cert-sub-title">نشهد بأن الجهاز قد تم تركيبه وتشغيله وفق المعايير المعتمدة</div>
+          <div class="cert-ref" id="cert-ref-display">ATE-2026-0312</div>
+          <div class="cert-info-grid">
+            <div class="cert-info-item"><div class="cert-info-label"><span data-i18n="اسم العميل">اسم العميل</span></div><div class="cert-info-val" id="cert-client-name">شركة النور للحماية</div></div>
+            <div class="cert-info-item"><div class="cert-info-label"><span data-i18n="الموقع / العقار">الموقع / العقار</span></div><div class="cert-info-val" id="cert-prop-name">مجمع الأعمال A</div></div>
+            <div class="cert-info-item"><div class="cert-info-label"><span data-i18n="رقم الجهاز S/N">رقم الجهاز S/N</span></div><div class="cert-info-val" id="cert-sn" style="font-family:var(--fm);font-size:11px">FP-2026-A304</div></div>
+            <div class="cert-info-item"><div class="cert-info-label"><span data-i18n="تاريخ التركيب">تاريخ التركيب</span></div><div class="cert-info-val" id="cert-install-date">2026-03-20</div></div>
+            <div class="cert-info-item"><div class="cert-info-label"><span data-i18n="تاريخ الإصدار">تاريخ الإصدار</span></div><div class="cert-info-val" id="cert-issue-date">2026-03-20</div></div>
+            <div class="cert-info-item"><div class="cert-info-label"><span data-i18n="صالح حتى">صالح حتى</span></div><div class="cert-info-val" id="cert-exp-date" style="color:var(--green);font-weight:900">2027-03-20</div></div>
+          </div>
+          <div class="cert-footer-line">
+            <div class="cert-sign-area"><div class="cert-sign-label"><span data-i18n="المُركِّب المعتمد">المُركِّب المعتمد</span></div><div class="cert-sign-name">م. خالد الشهري</div><div style="font-size:8px;color:var(--text3);font-family:var(--fm)">INST-0042</div></div>
+            <div class="cert-sign-area"><div class="cert-sign-label"><span data-i18n="مدير العمليات">مدير العمليات</span></div><div class="cert-sign-name">محمد الأمير</div><div style="font-size:8px;color:var(--text3);font-family:var(--fm)">OPS-DIRECTOR</div></div>
+            <div class="cert-sign-area"><div class="cert-sign-label"><span data-i18n="ختم الشركة">ختم الشركة</span></div><div style="width:44px;height:44px;border-radius:50%;border:2px solid var(--gold);display:flex;align-items:center;justify-content:center;font-size:18px;margin:0 auto">🔔</div></div>
+          </div>
+        </div>
+        <div style="display:flex;gap:8px;margin-top:10px">
+          <button class="btn btn-gold" style="flex:1" onclick="showToast('جارٍ تحميل الشهادة PDF','info')">⬇ تحميل PDF</button>
+          <button class="btn btn-primary" style="flex:1" onclick="showToast('تم إرسال الشهادة للعميل ✅','success')">📧 إرسال للعميل</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ════════════════════════════
+       8. DOCUMENTS
+  ════════════════════════════ -->
+  <div class="crm-page" id="pg-docs">
+    <div style="font-size:15px;font-weight:900;margin-bottom:16px">📁 إدارة المستندات الواردة</div>
+    <div class="kpi-grid" style="grid-template-columns:repeat(4,1fr)">
+      <div class="kpi-card red"><div class="kpi-top"><div class="kpi-icon red">⏳</div></div><div class="kpi-val red">5</div><div class="kpi-lbl"><span data-i18n="تنتظر المراجعة">تنتظر المراجعة</span></div></div>
+      <div class="kpi-card green"><div class="kpi-top"><div class="kpi-icon green">✅</div></div><div class="kpi-val green">47</div><div class="kpi-lbl"><span data-i18n="مقبولة">مقبولة</span></div></div>
+      <div class="kpi-card yellow"><div class="kpi-top"><div class="kpi-icon yellow">↩</div></div><div class="kpi-val yellow">3</div><div class="kpi-lbl"><span data-i18n="مُعادة للعميل">مُعادة للعميل</span></div></div>
+      <div class="kpi-card blue"><div class="kpi-top"><div class="kpi-icon blue">📦</div></div><div class="kpi-val blue">55</div><div class="kpi-lbl"><span data-i18n="إجمالي المستندات">إجمالي المستندات</span></div></div>
+    </div>
+    <div class="crm-panel">
+      <div class="crm-panel-hd"><div class="crm-panel-title">المستندات المرفوعة من العملاء</div></div>
+      <div style="overflow-x:auto">
+        <table class="crm-table">
+          <thead><tr><th><span data-i18n="العميل">العميل</span></th><th><span data-i18n="نوع المستند">نوع المستند</span></th><th><span data-i18n="العقار">العقار</span></th><th><span data-i18n="تاريخ الرفع">تاريخ الرفع</span></th><th><span data-i18n="الحجم">الحجم</span></th><th><span data-i18n="الحالة">الحالة</span></th><th><span data-i18n="إجراءات">إجراءات</span></th></tr></thead>
+          <tbody>
+            <tr><td style="font-weight:700">شركة الأمان</td><td>عقد إيجار</td><td>مجمع B</td><td style="font-family:var(--fm);font-size:10px">2026-03-25 14:32</td><td style="font-family:var(--fm);font-size:10px;color:var(--text3)">2.1 MB</td><td><span class="badge badge-yellow">⏳ جديد</span></td><td style="display:flex;gap:4px"><button class="btn btn-outline btn-sm" onclick="showToast('جارٍ فتح المستند','info')">عرض</button><button class="btn btn-success btn-sm" onclick="showToast('✅ تم قبول المستند وإشعار العميل','success')">قبول</button><button class="btn btn-danger btn-sm" onclick="openModal('modal-reject-doc')">رفض</button></td></tr>
+            <tr><td style="font-weight:700">فندق الخليج</td><td>هوية مفوّض التوقيع</td><td>المبنى الرئيسي</td><td style="font-family:var(--fm);font-size:10px">2026-03-24 09:15</td><td style="font-family:var(--fm);font-size:10px;color:var(--text3)">0.8 MB</td><td><span class="badge badge-yellow">⏳ جديد</span></td><td style="display:flex;gap:4px"><button class="btn btn-outline btn-sm" onclick="showToast('جارٍ فتح المستند','info')">عرض</button><button class="btn btn-success btn-sm" onclick="showToast('✅ تم قبول المستند','success')">قبول</button><button class="btn btn-danger btn-sm" onclick="openModal('modal-reject-doc')">رفض</button></td></tr>
+            <tr><td style="font-weight:700">مصنع الأمل</td><td>رخصة تجارية</td><td>المصنع الرئيسي</td><td style="font-family:var(--fm);font-size:10px">2026-03-23 16:44</td><td style="font-family:var(--fm);font-size:10px;color:var(--text3)">1.4 MB</td><td><span class="badge badge-yellow">⏳ جديد</span></td><td style="display:flex;gap:4px"><button class="btn btn-outline btn-sm" onclick="showToast('جارٍ فتح المستند','info')">عرض</button><button class="btn btn-success btn-sm" onclick="showToast('✅ تم قبول المستند','success')">قبول</button><button class="btn btn-danger btn-sm" onclick="openModal('modal-reject-doc')">رفض</button></td></tr>
+            <tr><td style="font-weight:700">شركة النور</td><td>عقد إيجار</td><td>مجمع A</td><td style="font-family:var(--fm);font-size:10px">2026-03-20 11:22</td><td style="font-family:var(--fm);font-size:10px;color:var(--text3)">3.2 MB</td><td><span class="badge badge-green">✓ مقبول</span></td><td style="display:flex;gap:4px"><button class="btn btn-outline btn-sm" onclick="showToast('جارٍ فتح المستند','info')">عرض</button></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ════════════════════════════
+       9. TEAM
+  ════════════════════════════ -->
+  <div class="crm-page" id="pg-team">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
+      <div style="font-size:15px;font-weight:900">👷 إدارة فريق الفنيين</div>
+      <button class="btn btn-primary" onclick="openModal('modal-new-tech')"><span data-i18n="＋ فني جديد">＋ فني جديد</span></button>
+    </div>
+    <div class="kpi-grid">
+      <div class="kpi-card green"><div class="kpi-top"><div class="kpi-icon green">👷</div></div><div class="kpi-val green">8</div><div class="kpi-lbl"><span data-i18n="فنيون نشطون">فنيون نشطون</span></div></div>
+      <div class="kpi-card blue"><div class="kpi-top"><div class="kpi-icon blue">✅</div></div><div class="kpi-val blue">248</div><div class="kpi-lbl"><span data-i18n="تركيب مكتمل إجمالاً">تركيب مكتمل إجمالاً</span></div></div>
+      <div class="kpi-card yellow"><div class="kpi-top"><div class="kpi-icon yellow">📅</div></div><div class="kpi-val yellow">31</div><div class="kpi-lbl"><span data-i18n="زيارة هذا الشهر">زيارة هذا الشهر</span></div></div>
+      <div class="kpi-card gold"><div class="kpi-top"><div class="kpi-icon gold">⭐</div></div><div class="kpi-val gold">99%</div><div class="kpi-lbl"><span data-i18n="معدل نجاح الاختبار">معدل نجاح الاختبار</span></div></div>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:14px">
+      <div class="tech-card"><div class="tc-head"><div class="tc-av" style="background:linear-gradient(135deg,var(--blue),var(--cyan))">خ</div><span class="badge badge-green">● نشط</span></div><div style="font-size:14px;font-weight:700;margin-bottom:2px">خالد الشهري</div><div style="font-size:10px;color:var(--text3);font-family:var(--fm);margin-bottom:12px">INST-0042 · Level 3</div><div style="display:flex;flex-direction:column;gap:5px"><div style="display:flex;justify-content:space-between;font-size:11px"><span style="color:var(--text2)">هذا الشهر</span><span style="font-weight:700;color:var(--green)">8 تركيب</span></div><div style="display:flex;justify-content:space-between;font-size:11px"><span style="color:var(--text2)">نجاح الاختبار</span><span style="font-weight:700;color:var(--green)">100%</span></div><div style="display:flex;justify-content:space-between;font-size:11px"><span style="color:var(--text2)">متوسط الوقت</span><span style="font-weight:700">2.3 ساعة</span></div></div></div>
+      <div class="tech-card"><div class="tc-head"><div class="tc-av" style="background:linear-gradient(135deg,var(--yellow),var(--orange))">س</div><span class="badge badge-yellow">● في الميدان</span></div><div style="font-size:14px;font-weight:700;margin-bottom:2px">سالم العمري</div><div style="font-size:10px;color:var(--text3);font-family:var(--fm);margin-bottom:12px">INST-0038 · Level 2</div><div style="display:flex;flex-direction:column;gap:5px"><div style="display:flex;justify-content:space-between;font-size:11px"><span style="color:var(--text2)">هذا الشهر</span><span style="font-weight:700;color:var(--green)">6 تركيب</span></div><div style="display:flex;justify-content:space-between;font-size:11px"><span style="color:var(--text2)">نجاح الاختبار</span><span style="font-weight:700;color:var(--green)">98%</span></div><div style="display:flex;justify-content:space-between;font-size:11px"><span style="color:var(--text2)">متوسط الوقت</span><span style="font-weight:700">2.7 ساعة</span></div></div></div>
+      <div class="tech-card"><div class="tc-head"><div class="tc-av" style="background:linear-gradient(135deg,var(--green),var(--cyan))">ف</div><span class="badge badge-green">● نشط</span></div><div style="font-size:14px;font-weight:700;margin-bottom:2px">فهد الزهراني</div><div style="font-size:10px;color:var(--text3);font-family:var(--fm);margin-bottom:12px">INST-0051 · Level 3</div><div style="display:flex;flex-direction:column;gap:5px"><div style="display:flex;justify-content:space-between;font-size:11px"><span style="color:var(--text2)">هذا الشهر</span><span style="font-weight:700;color:var(--green)">7 تركيب</span></div><div style="display:flex;justify-content:space-between;font-size:11px"><span style="color:var(--text2)">نجاح الاختبار</span><span style="font-weight:700;color:var(--yellow)">96%</span></div><div style="display:flex;justify-content:space-between;font-size:11px"><span style="color:var(--text2)">متوسط الوقت</span><span style="font-weight:700">2.5 ساعة</span></div></div></div>
+      <div class="tech-card"><div class="tc-head"><div class="tc-av" style="background:linear-gradient(135deg,#6c5ce7,#a29bfe)">أ</div><span class="badge badge-yellow">● في الميدان</span></div><div style="font-size:14px;font-weight:700;margin-bottom:2px">أحمد الدوسري</div><div style="font-size:10px;color:var(--text3);font-family:var(--fm);margin-bottom:12px">INST-0029 · Level 2</div><div style="display:flex;flex-direction:column;gap:5px"><div style="display:flex;justify-content:space-between;font-size:11px"><span style="color:var(--text2)">هذا الشهر</span><span style="font-weight:700;color:var(--green)">5 تركيب</span></div><div style="display:flex;justify-content:space-between;font-size:11px"><span style="color:var(--text2)">نجاح الاختبار</span><span style="font-weight:700;color:var(--green)">100%</span></div><div style="display:flex;justify-content:space-between;font-size:11px"><span style="color:var(--text2)">متوسط الوقت</span><span style="font-weight:700">2.1 ساعة</span></div></div></div>
+    </div>
+  </div>
+
+
+  <!-- ════════════════════════════
+       10. REPORTS
+  ════════════════════════════ -->
+  <div class="crm-page" id="pg-reports">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
+      <div style="font-size:15px;font-weight:900">📈 التقارير والإحصائيات</div>
+      <button class="btn btn-outline" onclick="showToast('جارٍ تصدير التقرير الشامل','info')">⬇ تصدير PDF</button>
+    </div>
+    <div class="kpi-grid">
+      <div class="kpi-card green"><div class="kpi-top"><div class="kpi-icon green">💰</div><span class="kpi-change up">▲ +8.5% عن الشهر الماضي</span></div><div class="kpi-val green">480,000</div><div class="kpi-lbl"><span data-i18n="إجمالي الإيرادات (درهم)">إجمالي الإيرادات (درهم)</span></div></div>
+      <div class="kpi-card blue"><div class="kpi-top"><div class="kpi-icon blue">📜</div><span class="kpi-change up">▲ +12 هذا الشهر</span></div><div class="kpi-val blue">248</div><div class="kpi-lbl"><span data-i18n="شهادة صادرة إجمالاً">شهادة صادرة إجمالاً</span></div></div>
+      <div class="kpi-card yellow"><div class="kpi-top"><div class="kpi-icon yellow">⏱️</div><span class="kpi-change neutral">متوسط</span></div><div class="kpi-val yellow">4.2</div><div class="kpi-lbl"><span data-i18n="أيام من الطلب للتركيب">أيام من الطلب للتركيب</span></div></div>
+      <div class="kpi-card gold"><div class="kpi-top"><div class="kpi-icon gold">✅</div><span class="kpi-change up">▲ من 97%</span></div><div class="kpi-val gold">99%</div><div class="kpi-lbl"><span data-i18n="معدل الإتمام الناجح">معدل الإتمام الناجح</span></div></div>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+      <div class="crm-panel">
+        <div class="crm-panel-hd"><div class="crm-panel-title">📊 الإيرادات الشهرية (درهم)</div></div>
+        <div class="crm-panel-body">
+          <div style="display:flex;flex-direction:column;gap:10px">
+            <div><div style="display:flex;justify-content:space-between;font-size:11px;margin-bottom:4px"><span style="color:var(--text2)">يناير 2026</span><span style="font-family:var(--fm);font-weight:700">60,000 د</span></div><div class="stat-bar"><div class="stat-bar-fill" style="width:50%;background:linear-gradient(90deg,var(--blue),var(--cyan))"></div></div></div>
+            <div><div style="display:flex;justify-content:space-between;font-size:11px;margin-bottom:4px"><span style="color:var(--text2)">فبراير 2026</span><span style="font-family:var(--fm);font-weight:700">80,000 د</span></div><div class="stat-bar"><div class="stat-bar-fill" style="width:67%;background:linear-gradient(90deg,var(--blue),var(--cyan))"></div></div></div>
+            <div><div style="display:flex;justify-content:space-between;font-size:11px;margin-bottom:4px"><span style="color:var(--text2)">مارس 2026</span><span style="font-family:var(--fm);font-weight:700;color:var(--green)">120,000 د ↑</span></div><div class="stat-bar"><div class="stat-bar-fill" style="width:100%;background:linear-gradient(90deg,var(--green),var(--cyan))"></div></div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="crm-panel">
+        <div class="crm-panel-hd"><div class="crm-panel-title">📋 تقارير للدفاع المدني</div></div>
+        <div class="crm-panel-body" style="display:flex;flex-direction:column;gap:10px">
+          <div style="padding:10px 12px;background:var(--bg);border:1px solid var(--border);border-radius:8px;display:flex;align-items:center;justify-content:space-between">
+            <div><div style="font-size:12px;font-weight:700">تقرير الشهادات الصادرة</div><div style="font-size:10px;color:var(--text2)">مارس 2026 · 48 شهادة</div></div>
+            <button class="btn btn-primary btn-sm" onclick="showToast('جارٍ تحضير تقرير الدفاع المدني','info')">⬇ PDF</button>
+          </div>
+          <div style="padding:10px 12px;background:var(--bg);border:1px solid var(--border);border-radius:8px;display:flex;align-items:center;justify-content:space-between">
+            <div><div style="font-size:12px;font-weight:700">تقرير الأجهزة المُركَّبة</div><div style="font-size:10px;color:var(--text2)">Q1 2026 · 120 جهاز</div></div>
+            <button class="btn btn-primary btn-sm" onclick="showToast('جارٍ تحضير التقرير','info')">⬇ PDF</button>
+          </div>
+          <div style="padding:10px 12px;background:var(--bg);border:1px solid var(--border);border-radius:8px;display:flex;align-items:center;justify-content:space-between">
+            <div><div style="font-size:12px;font-weight:700">قائمة العقارات الممتثلة</div><div style="font-size:10px;color:var(--text2)">248 عقار · سارية الشهادة</div></div>
+            <button class="btn btn-primary btn-sm" onclick="showToast('جارٍ تحضير القائمة','info')">⬇ Excel</button>
+          </div>
+          <div style="padding:10px 12px;background:var(--bg);border:1px solid var(--border);border-radius:8px;display:flex;align-items:center;justify-content:space-between">
+            <div><div style="font-size:12px;font-weight:700">تقرير الشهادات المنتهية</div><div style="font-size:10px;color:var(--text2)">8 شهادات تحتاج تجديد</div></div>
+            <button class="btn btn-danger btn-sm" onclick="showToast('جارٍ تحضير تقرير المنتهية','info')">⬇ PDF</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  </div><!-- /crm-content -->
+</main>
+</div><!-- /crm-app -->
+
+
+<!-- ══════════════════════════════
+     MODALS
+══════════════════════════════ -->
+
+<!-- NEW REQUEST MODAL -->
+<div class="crm-overlay" id="modal-new-request" onclick="if(event.target===this)closeModal('modal-new-request')">
+  <div class="crm-modal">
+    <div class="modal-hd"><div class="modal-title"><span data-i18n="📋 طلب تركيب جديد">📋 طلب تركيب جديد</span></div><div class="modal-close" onclick="closeModal('modal-new-request')">✕</div></div>
+    <div class="modal-body">
+      <!-- Stepper -->
+      <div class="stepper">
+        <div class="step-item active"><div class="step-circle">1</div><div class="step-label"><span data-i18n="بيانات العميل">بيانات العميل</span></div></div>
+        <div class="step-line"></div>
+        <div class="step-item"><div class="step-circle">2</div><div class="step-label"><span data-i18n="بيانات العقار">بيانات العقار</span></div></div>
+        <div class="step-line"></div>
+        <div class="step-item"><div class="step-circle">3</div><div class="step-label">الفاتورة</div></div>
+        <div class="step-line"></div>
+        <div class="step-item"><div class="step-circle">4</div><div class="step-label">الجدولة</div></div>
+      </div>
+      <div class="form-grid-2" style="margin-bottom:12px">
+        <div class="form-group"><label class="form-label"><span data-i18n="اسم العميل / الشركة *">اسم العميل / الشركة *</span></label><input class="form-input" placeholder="اسم الشركة أو الفرد"></div>
+        <div class="form-group"><label class="form-label"><span data-i18n="رقم الجوال *">رقم الجوال *</span></label><input class="form-input" placeholder="05XXXXXXXX" type="tel"></div>
+      </div>
+      <div class="form-grid-2" style="margin-bottom:12px">
+        <div class="form-group"><label class="form-label"><span data-i18n="البريد الإلكتروني">البريد الإلكتروني</span></label><input class="form-input" placeholder="email@company.com" type="email"></div>
+        <div class="form-group"><label class="form-label"><span data-i18n="نوع العميل">نوع العميل</span></label><select class="form-select"><option>شركة تجارية</option><option>فرد / مالك عقار</option><option>حكومي</option><option>صناعي</option></select></div>
+      </div>
+      <div class="form-grid-2" style="margin-bottom:12px">
+        <div class="form-group"><label class="form-label"><span data-i18n="اسم العقار / المشروع *">اسم العقار / المشروع *</span></label><input class="form-input" placeholder="مثال: مجمع الأعمال A"></div>
+        <div class="form-group"><label class="form-label"><span data-i18n="الحي / المنطقة">الحي / المنطقة</span></label><input class="form-input" placeholder="حي العليا، الرياض"></div>
+      </div>
+      <div class="form-grid-3" style="margin-bottom:12px">
+        <div class="form-group"><label class="form-label"><span data-i18n="عدد الطوابق">عدد الطوابق</span></label><input class="form-input" placeholder="5" type="number"></div>
+        <div class="form-group"><label class="form-label"><span data-i18n="نوع المبنى">نوع المبنى</span></label><select class="form-select"><option>تجاري</option><option>سكني</option><option>صناعي</option><option>حكومي</option></select></div>
+        <div class="form-group"><label class="form-label"><span data-i18n="عدد الأجهزة المطلوبة">عدد الأجهزة المطلوبة</span></label><input class="form-input" placeholder="1" type="number" value="1"></div>
+      </div>
+      <div style="background:rgba(49,130,206,.06);border:1px solid rgba(49,130,206,.2);border-radius:9px;padding:12px 14px;display:flex;justify-content:space-between;align-items:center">
+        <span style="font-size:13px;font-weight:700"><span data-i18n="قيمة الطلب">قيمة الطلب</span></span>
+        <span style="font-family:var(--fe);font-size:20px;font-weight:700;color:var(--blue)">10,000 درهم</span>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeModal('modal-new-request')"><span data-i18n="إلغاء">إلغاء</span></button>
+      <button class="btn btn-primary" onclick="submitNewRequest()">إنشاء الطلب وإصدار الفاتورة ←</button>
+    </div>
+  </div>
+</div>
+
+<!-- NEW CERT MODAL -->
+<div class="crm-overlay" id="modal-new-cert" onclick="if(event.target===this)closeModal('modal-new-cert')">
+  <div class="crm-modal">
+    <div class="modal-hd"><div class="modal-title"><span data-i18n="📜 إصدار شهادة تركيب">📜 إصدار شهادة تركيب</span></div><div class="modal-close" onclick="closeModal('modal-new-cert')">✕</div></div>
+    <div class="modal-body">
+      <div class="form-grid-2" style="margin-bottom:12px">
+        <div class="form-group"><label class="form-label">العميل *</label><select class="form-select"><option>شركة النور للحماية</option><option>فندق الخليج الكبير</option><option>مجموعة الخليج العقارية</option></select></div>
+        <div class="form-group"><label class="form-label">العقار *</label><select class="form-select"><option>مجمع A</option><option>مجمع B</option><option>المبنى الرئيسي</option></select></div>
+      </div>
+      <div class="form-grid-2" style="margin-bottom:12px">
+        <div class="form-group"><label class="form-label">رقم الجهاز S/N *</label><input class="form-input" placeholder="FP-2026-XXXX" style="font-family:var(--fm)"></div>
+        <div class="form-group"><label class="form-label">AJ Code</label><input class="form-input" placeholder="AJ00000" style="font-family:var(--fm)"></div>
+      </div>
+      <div class="form-grid-2" style="margin-bottom:12px">
+        <div class="form-group"><label class="form-label">تاريخ التركيب *</label><input class="form-input" type="date" value="2026-03-25"></div>
+        <div class="form-group"><label class="form-label">المُركِّب المعتمد *</label><select class="form-select"><option>م. خالد الشهري (INST-0042)</option><option>م. سالم العمري (INST-0038)</option><option>م. فهد الزهراني (INST-0051)</option></select></div>
+      </div>
+      <div class="form-grid-2" style="margin-bottom:12px">
+        <div class="form-group"><label class="form-label"><span data-i18n="صالحة لمدة">صالحة لمدة</span></label><select class="form-select"><option>سنة واحدة</option><option>سنتان</option></select></div>
+        <div class="form-group"><label class="form-label"><span data-i18n="الرقم المرجعي (تلقائي)">الرقم المرجعي (تلقائي)</span></label><input class="form-input" value="ATE-2026-0413" style="font-family:var(--fm);background:var(--bg2)" readonly></div>
+      </div>
+      <div style="background:rgba(183,121,31,.06);border:1px solid rgba(183,121,31,.2);border-radius:9px;padding:12px;text-align:center">
+        <div style="font-size:11px;color:var(--gold);font-family:var(--fm);margin-bottom:4px">رقم التحقق — يُرسل للدفاع المدني</div>
+        <div style="font-size:18px;font-weight:700;font-family:var(--fm);letter-spacing:4px;color:var(--blue)">ATE-2026-0413</div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeModal('modal-new-cert')"><span data-i18n="إلغاء">إلغاء</span></button>
+      <button class="btn btn-gold" onclick="issueCert()">📜 إصدار الشهادة</button>
+    </div>
+  </div>
+</div>
+
+<!-- REQUEST DETAIL MODAL -->
+<div class="crm-overlay" id="modal-request-detail" onclick="if(event.target===this)closeModal('modal-request-detail')">
+  <div class="crm-modal">
+    <div class="modal-hd"><div class="modal-title">📋 تفاصيل الطلب — REQ-2026-0412</div><div class="modal-close" onclick="closeModal('modal-request-detail')">✕</div></div>
+    <div class="modal-body">
+      <!-- Progress -->
+      <div class="stepper" style="margin-bottom:20px">
+        <div class="step-item done"><div class="step-circle">✓</div><div class="step-label"><span data-i18n="طلب جديد">طلب جديد</span></div></div>
+        <div class="step-line done"></div>
+        <div class="step-item active"><div class="step-circle">2</div><div class="step-label"><span data-i18n="بانتظار الدفع">بانتظار الدفع</span></div></div>
+        <div class="step-line"></div>
+        <div class="step-item"><div class="step-circle">3</div><div class="step-label">مجدول</div></div>
+        <div class="step-line"></div>
+        <div class="step-item"><div class="step-circle">4</div><div class="step-label">تم التركيب</div></div>
+        <div class="step-line"></div>
+        <div class="step-item"><div class="step-circle">5</div><div class="step-label"><span data-i18n="شهادة صادرة">شهادة صادرة</span></div></div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:0;background:var(--border);border-radius:10px;overflow:hidden;margin-bottom:16px">
+        <div style="background:var(--bg);padding:11px 14px;border-left:1px solid var(--border);border-bottom:1px solid var(--border)"><div style="font-size:9px;color:var(--text3);font-family:var(--fm);margin-bottom:3px">العميل</div><div style="font-weight:700">فندق الخليج الكبير</div></div>
+        <div style="background:var(--bg);padding:11px 14px;border-bottom:1px solid var(--border)"><div style="font-size:9px;color:var(--text3);font-family:var(--fm);margin-bottom:3px">العقار</div><div style="font-weight:700">المبنى الرئيسي</div></div>
+        <div style="background:var(--bg);padding:11px 14px;border-left:1px solid var(--border);border-bottom:1px solid var(--border)"><div style="font-size:9px;color:var(--text3);font-family:var(--fm);margin-bottom:3px">القيمة</div><div style="font-weight:700;color:var(--blue);font-family:var(--fe)">10,000 درهم</div></div>
+        <div style="background:var(--bg);padding:11px 14px;border-bottom:1px solid var(--border)"><div style="font-size:9px;color:var(--text3);font-family:var(--fm);margin-bottom:3px">تاريخ الطلب</div><div style="font-family:var(--fm)">2026-03-25</div></div>
+        <div style="background:var(--bg);padding:11px 14px;border-left:1px solid var(--border)"><div style="font-size:9px;color:var(--text3);font-family:var(--fm);margin-bottom:3px">الحالة</div><span class="badge badge-blue">② بانتظار الدفع</span></div>
+        <div style="background:var(--bg);padding:11px 14px"><div style="font-size:9px;color:var(--text3);font-family:var(--fm);margin-bottom:3px">الفاتورة</div><div style="font-family:var(--fm);color:var(--blue)">INV-2026-0412</div></div>
+      </div>
+      <div style="display:flex;gap:8px">
+        <button class="btn btn-success" style="flex:1" onclick="closeModal('modal-request-detail');showToast('✅ تم تسجيل الدفع — الطلب انتقل لمرحلة الجدولة','success')">✅ تسجيل دفع مستلم</button>
+        <button class="btn btn-warning" style="flex:1" onclick="closeModal('modal-request-detail');showPage('pg-schedule',document.querySelector('[onclick*=pg-schedule]'))">📅 جدولة التركيب</button>
+        <button class="btn btn-outline" onclick="showToast('جارٍ تحميل الفاتورة','info')">📄 الفاتورة</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- REJECT DOC MODAL -->
+<div class="crm-overlay" id="modal-reject-doc" onclick="if(event.target===this)closeModal('modal-reject-doc')">
+  <div class="crm-modal" style="max-width:420px">
+    <div class="modal-hd"><div class="modal-title"><span data-i18n="↩ رفض المستند وإعادته للعميل">↩ رفض المستند وإعادته للعميل</span></div><div class="modal-close" onclick="closeModal('modal-reject-doc')">✕</div></div>
+    <div class="modal-body">
+      <div class="form-group" style="margin-bottom:12px"><label class="form-label"><span data-i18n="سبب الرفض">سبب الرفض</span></label><select class="form-select"><option>المستند غير واضح / جودة منخفضة</option><option>المستند منتهي الصلاحية</option><option>نوع مستند خاطئ</option><option>معلومات ناقصة</option><option>أخرى</option></select></div>
+      <div class="form-group"><label class="form-label"><span data-i18n="ملاحظة للعميل">ملاحظة للعميل</span></label><textarea class="form-textarea" rows="3" placeholder="اكتب ملاحظة للعميل توضح ما يجب تصحيحه..."></textarea></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeModal('modal-reject-doc')"><span data-i18n="إلغاء">إلغاء</span></button>
+      <button class="btn btn-danger" onclick="rejectDoc()">↩ إرسال الرفض وإشعار العميل</button>
+    </div>
+  </div>
+</div>
+
+<!-- NEW SCHEDULE MODAL -->
+<div class="crm-overlay" id="modal-new-schedule" onclick="if(event.target===this)closeModal('modal-new-schedule')">
+  <div class="crm-modal">
+    <div class="modal-hd"><div class="modal-title"><span data-i18n="📅 جدولة زيارة تركيب / صيانة">📅 جدولة زيارة تركيب / صيانة</span></div><div class="modal-close" onclick="closeModal('modal-new-schedule')">✕</div></div>
+    <div class="modal-body">
+      <div class="form-grid-2" style="margin-bottom:12px">
+        <div class="form-group"><label class="form-label"><span data-i18n="نوع الزيارة *">نوع الزيارة *</span></label><select class="form-select"><option>تركيب جهاز جديد</option><option>صيانة دورية</option><option>إصلاح عطل</option><option>فحص شامل</option></select></div>
+        <div class="form-group"><label class="form-label"><span data-i18n="الطلب المرتبط">الطلب المرتبط</span></label><select class="form-select"><option>REQ-2026-0412 — فندق الخليج</option><option>REQ-2026-0411 — مصنع الأمل</option></select></div>
+      </div>
+      <div class="form-grid-3" style="margin-bottom:12px">
+        <div class="form-group"><label class="form-label"><span data-i18n="التاريخ *">التاريخ *</span></label><input class="form-input" type="date" value="2026-03-28"></div>
+        <div class="form-group"><label class="form-label"><span data-i18n="الوقت *">الوقت *</span></label><input class="form-input" type="time" value="09:00"></div>
+        <div class="form-group"><label class="form-label"><span data-i18n="المدة التقديرية">المدة التقديرية</span></label><select class="form-select"><option>2 ساعة</option><option>3 ساعات</option><option>4 ساعات</option><option>يوم كامل</option></select></div>
+      </div>
+      <div class="form-group" style="margin-bottom:12px"><label class="form-label"><span data-i18n="الفني المعيّن *">الفني المعيّن *</span></label><select class="form-select"><option>م. خالد الشهري (INST-0042) — متاح ✓</option><option>م. فهد الزهراني (INST-0051) — متاح ✓</option><option>م. سالم العمري (INST-0038) — مشغول</option></select></div>
+      <div class="form-group"><label class="form-label"><span data-i18n="ملاحظات للفني">ملاحظات للفني</span></label><textarea class="form-textarea" rows="2" placeholder="أي تعليمات خاصة للفني..."></textarea></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeModal('modal-new-schedule')"><span data-i18n="إلغاء">إلغاء</span></button>
+      <button class="btn btn-primary" onclick="saveSchedule()">📅 حفظ الموعد وإشعار الفني</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div id="crm-toast" style="position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--text);color:#fff;border-radius:10px;padding:11px 22px;font-size:13px;font-weight:700;box-shadow:0 8px 32px rgba(0,0,0,.2);z-index:9999;opacity:0;transition:all .3s;pointer-events:none;white-space:nowrap;font-family:var(--fa);border:1px solid rgba(255,255,255,.1)"></div>
+
+<script>
+// ══ NAVIGATION ══
+const pageTitles = {
+  'pg-dash':'لوحة التحكم','pg-clients':'إدارة العملاء','pg-requests':'الطلبات الواردة',
+  'pg-pipeline':'Pipeline — مسار الطلبات','pg-invoices':'الفواتير','pg-payments':'المدفوعات',
+  'pg-schedule':'جدولة التركيب والصيانة','pg-certs':'إصدار وإدارة الشهادات',
+  'pg-docs':'إدارة المستندات','pg-team':'فريق الفنيين','pg-reports':'التقارير'
+};
+window._origShowPage = null;
+function showPage(id, el) {
+  document.querySelectorAll('.crm-page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.cs-item').forEach(i => i.classList.remove('active'));
+  document.getElementById(id)?.classList.add('active');
+  if(el) el.classList.add('active');
+  const t = document.getElementById('page-title-text');
+  const titlesEN={'pg-dash':'Dashboard','pg-clients':'Client Management','pg-requests':'Incoming Requests','pg-pipeline':'Pipeline','pg-invoices':'Invoices','pg-payments':'Payments','pg-schedule':'Scheduling','pg-certs':'Certificates','pg-docs':'Documents','pg-team':'Technicians','pg-reports':'Reports'};
+  if(t) t.textContent = currentLang==='ar' ? (pageTitles[id]||'') : (titlesEN[id]||pageTitles[id]||'');
+}
+
+// ══ MODALS ══
+function openModal(id) {
+  const m = document.getElementById(id);
+  if(m){ m.style.opacity='1'; m.style.pointerEvents='all'; m.classList.add('open'); }
+  document.body.style.overflow = 'hidden';
+}
+function closeModal(id) {
+  const m = document.getElementById(id);
+  if(m){ m.style.opacity='0'; m.style.pointerEvents='none'; m.classList.remove('open'); }
+  document.body.style.overflow = '';
+}
+document.addEventListener('keydown', e => {
+  if(e.key==='Escape') document.querySelectorAll('.crm-overlay').forEach(m => {
+    m.style.opacity='0'; m.style.pointerEvents='none'; m.classList.remove('open');
+    document.body.style.overflow='';
+  });
+});
+
+// ══ TOAST ══
+function showToast(msg, type='info') {
+  const t = document.getElementById('crm-toast');
+  const colors = {success:'var(--green)',error:'var(--red)',info:'var(--blue)',warning:'var(--yellow)'};
+  t.style.color = '#fff';
+  t.style.background = type==='success'?'var(--green)':type==='error'?'var(--red)':type==='warning'?'var(--yellow)':'var(--blue)';
+  if(type==='warning') t.style.color = 'var(--text)';
+  t.textContent = msg;
+  t.style.opacity='1'; t.style.transform='translateX(-50%) translateY(0)';
+  clearTimeout(t._t);
+  t._t = setTimeout(()=>{ t.style.opacity='0'; t.style.transform='translateX(-50%) translateY(20px)'; }, 3000);
+}
+
+// ══ FILTER CHIPS ══
+function toggleFilter(el) {
+  document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
+  el.classList.add('active');
+}
+
+// ══ ACTIONS ══
+function submitNewRequest() {
+  closeModal('modal-new-request');
+  showToast('✅ تم إنشاء الطلب REQ-2026-0413 وإصدار الفاتورة', 'success');
+  // Add to activity feed
+  addActivity('📋','yellow','طلب جديد مُنشأ','REQ-2026-0413 · فاتورة صادرة','الآن');
+}
+
+function issueCert() {
+  closeModal('modal-new-cert');
+  showToast('📜 تم إصدار الشهادة ATE-2026-0413 بنجاح!', 'success');
+  addActivity('📜','green','شهادة جديدة صادرة','ATE-2026-0413 · تم الإرسال للعميل','الآن');
+}
+
+function rejectDoc() {
+  closeModal('modal-reject-doc');
+  showToast('↩ تم رفض المستند وإشعار العميل', 'warning');
+}
+
+function saveSchedule() {
+  closeModal('modal-new-schedule');
+  showToast('📅 تم جدولة الزيارة وإشعار الفني', 'success');
+  addActivity('📅','blue','موعد جديد مجدول','2026-03-28 09:00 · م. خالد','الآن');
+}
+
+function openClientDetail(id) {
+  showToast('عرض تفاصيل العميل ' + id, 'info');
+}
+
+function previewCert(ref) {
+  document.getElementById('cert-ref-display').textContent = ref;
+  showToast('معاينة الشهادة: ' + ref, 'info');
+}
+
+function addActivity(icon, color, title, desc, time) {
+  const feed = document.getElementById('activity-feed');
+  if(!feed) return;
+  const item = document.createElement('div');
+  item.className = 'activity-item';
+  item.innerHTML = `<div class="act-icon ${color}">${icon}</div><div class="act-text"><div class="act-title">${title}</div><div class="act-desc">${desc}</div></div><div class="act-time">${time}</div>`;
+  feed.insertBefore(item, feed.firstChild);
+  if(feed.children.length > 7) feed.removeChild(feed.lastChild);
+}
+
+// ══ CALENDAR ══
+function buildCalendar() {
+  const grid = document.getElementById('cal-grid');
+  if(!grid) return;
+  const year=2026, month=2; // March 2026 (0-indexed)
+  const firstDay = new Date(year, month, 1).getDay();
+  const daysInMonth = new Date(year, month+1, 0).getDate();
+  const today = 25;
+
+  const isCalAR = currentLang === 'ar';
+  const events = {
+    24: [{label: isCalAR?'تركيب — مجمع A':'Install — Complex A', type:'install'}],
+    25: [{label: isCalAR?'تركيب — برج 7':'Install — Tower 7', type:'install'},{label: isCalAR?'صيانة — النور':'Maint — Al Nour', type:'maint'}],
+    26: [{label: isCalAR?'فحص — برج 3':'Inspect — Tower 3', type:'visit'}],
+    28: [{label: isCalAR?'تركيب — الأمل':'Install — Al Amal', type:'install'},{label: isCalAR?'تركيب — الخليج':'Install — Gulf', type:'install'}],
+    29: [{label: isCalAR?'تركيب — برج الأعمال':'Install — Business Tower', type:'install'}],
+    30: [{label: isCalAR?'صيانة — مجمع C':'Maint — Complex C', type:'maint'}],
+    31: [{label: isCalAR?'تركيب × 2':'Install × 2', type:'install'}],
+  };
+
+  grid.innerHTML = '';
+  // Empty cells before first day
+  for(let i=0; i<firstDay; i++){
+    grid.innerHTML += `<div class="cal-cell other-month"><div class="cal-num" style="color:var(--text3)">${new Date(year,month,1-firstDay+i).getDate()}</div></div>`;
+  }
+  for(let d=1; d<=daysInMonth; d++){
+    const isToday = d===today;
+    const dayEvents = events[d] || [];
+    let evHtml = dayEvents.map(e=>`<div class="cal-event ${e.type}">${e.label}</div>`).join('');
+    const calLabel = isCalAR ? (d+' مارس 2026 — '+dayEvents.length+' زيارة') : ('March '+d+' — '+dayEvents.length+' visit'+(dayEvents.length!==1?'s':''));
+    grid.innerHTML += '<div class="cal-cell'+(isToday?' today':'')+'" onclick="showToast("'+calLabel+'","info")" ><div class="cal-num">'+d+'</div>'+evHtml+'</div>';
+  }
+}
+buildCalendar();
+
+// ══ CLOCK (topbar — if needed) ══
+function updateClock() {
+  const n = new Date();
+  const pad = x => String(x).padStart(2,'0');
+  // Could add clock to topbar if needed
+}
+setInterval(updateClock, 1000);
+
+// ══════════════════════════════════════════════════
+// BILINGUAL ENGINE — AR / EN
+// ══════════════════════════════════════════════════
+const T = {
+  'الرئيسية':'Main','العمليات':'Operations','المالية':'Finance',
+  'التشغيل':'Operations','الفريق':'Team',
+  'لوحة التحكم':'Dashboard','العملاء':'Clients','الطلبات':'Requests',
+  'الفواتير':'Invoices','المدفوعات':'Payments','الجدولة':'Scheduling',
+  'الشهادات':'Certificates','المستندات':'Documents','الفنيون':'Technicians',
+  'التقارير':'Reports',
+  'مرحباً، محمد 👋':'Welcome, Mohammed',
+  'الأربعاء، 25 مارس 2026 · إليك ملخص اليوم':'Wednesday Mar 25 2026 · Today Summary',
+  'إدارة العملاء':'Client Management',
+  'الطلبات الواردة':'Incoming Requests',
+  'Pipeline — مسار الطلبات':'Pipeline — Request Flow',
+  'إصدار وإدارة الشهادات':'Certificate Management',
+  'إدارة فريق الفنيين':'Technician Team',
+  'التقارير والإحصائيات':'Reports & Analytics',
+  'جدولة التركيب والصيانة':'Installation & Maintenance Schedule',
+  'إدارة المستندات الواردة':'Incoming Documents',
+  'إجمالي العملاء':'Total Clients',
+  'طلبات بانتظار المعالجة':'Pending Requests',
+  'مبالغ مستحقة (درهم)':'Outstanding (AED)',
+  'زيارات مجدولة اليوم':"Today Visits",
+  'إجمالي المحصّل (درهم)':'Total Collected (AED)',
+  'مستحق التحصيل (درهم)':'Outstanding (AED)',
+  'متوقع هذا الشهر (درهم)':'Expected This Month (AED)',
+  'فنيون نشطون':'Active Technicians',
+  'تركيب مكتمل إجمالاً':'Total Installs',
+  'زيارة هذا الشهر':'Visits This Month',
+  'معدل نجاح الاختبار':'Test Success Rate',
+  'إجمالي الإيرادات (درهم)':'Total Revenue (AED)',
+  'شهادة صادرة إجمالاً':'Total Certs Issued',
+  'أيام من الطلب للتركيب':'Days Request to Install',
+  'معدل الإتمام الناجح':'Completion Rate',
+  'تنتظر المراجعة':'Pending Review',
+  'مقبولة':'Accepted',
+  'مُعادة للعميل':'Returned to Client',
+  'إجمالي المستندات':'Total Documents',
+  'الكود':'Code','اسم العميل / الشركة':'Client / Company',
+  'رقم التواصل':'Contact','عدد العقارات':'Properties',
+  'حالة الشهادة':'Cert Status','آخر تواصل':'Last Contact',
+  'الحالة':'Status','إجراءات':'Actions',
+  'رقم الطلب':'Request #','العميل':'Client','العقار':'Property',
+  'عدد الأجهزة':'Devices','القيمة':'Value','تاريخ الطلب':'Request Date',
+  'المرحلة':'Stage','رقم الفاتورة':'Invoice #',
+  'تاريخ الإصدار':'Issue Date','تاريخ الاستحقاق':'Due Date',
+  'رقم الشهادة':'Cert #','تاريخ الانتهاء':'Expiry',
+  'المتبقي':'Remaining','نوع المستند':'Doc Type',
+  'تاريخ الرفع':'Upload Date','الحجم':'Size','إجراء':'Action',
+  '① طلب جديد':'① New Request','② بانتظار الدفع':'② Awaiting Payment',
+  '③ مجدول للتركيب':'③ Scheduled','④ تم التركيب':'④ Installed',
+  '⑤ شهادة صادرة':'⑤ Cert Issued',
+  '＋ طلب جديد':'+ New Request','＋ عميل جديد':'+ New Client',
+  '＋ فاتورة جديدة':'+ New Invoice','＋ جدولة زيارة':'+ Schedule Visit',
+  '＋ إصدار شهادة جديدة':'+ Issue Certificate','＋ فني جديد':'+ New Technician',
+  'إلغاء':'Cancel','عرض الكل':'View All','اليوم':'Today','التقويم':'Calendar',
+  'إدارة الشهادات':'Manage Certs','إدارة المستندات':'Manage Docs',
+  'شهادة تركيب وتشغيل':'Installation Certificate',
+  'اسم العميل':'CLIENT NAME','الموقع / العقار':'LOCATION',
+  'رقم الجهاز S/N':'DEVICE S/N','تاريخ التركيب':'INSTALL DATE',
+  'تاريخ الإصدار':'ISSUE DATE','صالح حتى':'VALID UNTIL',
+  'المُركِّب المعتمد':'CERTIFIED INSTALLER',
+  'مدير العمليات':'OPERATIONS MANAGER','ختم الشركة':'COMPANY SEAL',
+  '📋 طلب تركيب جديد':'📋 New Installation Request',
+  '📜 إصدار شهادة تركيب':'📜 Issue Installation Certificate',
+  '📅 جدولة زيارة تركيب / صيانة':'📅 Schedule Installation Visit',
+  '↩ رفض المستند وإعادته للعميل':'↩ Reject & Return Document',
+  'بيانات العميل':'Client Info','بيانات العقار':'Property Info',
+  'طلب جديد':'New Request','بانتظار الدفع':'Awaiting Payment',
+  'شهادة صادرة':'Cert Issued',
+  'اسم العميل / الشركة *':'Client / Company *',
+  'رقم الجوال *':'Mobile *','البريد الإلكتروني':'Email',
+  'نوع العميل':'Client Type','اسم العقار / المشروع *':'Property Name *',
+  'الحي / المنطقة':'District / Area','عدد الطوابق':'Floors',
+  'نوع المبنى':'Building Type','عدد الأجهزة المطلوبة':'Devices Required',
+  'قيمة الطلب':'Order Value','نوع الزيارة *':'Visit Type *',
+  'الطلب المرتبط':'Linked Request','التاريخ *':'Date *',
+  'الوقت *':'Time *','المدة التقديرية':'Est. Duration',
+  'الفني المعيّن *':'Assigned Technician *',
+  'ملاحظات للفني':'Notes for Technician',
+  'سبب الرفض':'Rejection Reason','ملاحظة للعميل':'Note to Client',
+  'صالحة لمدة':'Valid For','الرقم المرجعي (تلقائي)':'Ref # (Auto)',
+  'أحد':'Sun','إثنين':'Mon','ثلاثاء':'Tue','أربعاء':'Wed',
+  'خميس':'Thu','جمعة':'Fri','سبت':'Sat',
+};
+
+function setLang(lang) {
+  currentLang = lang;
+  var isAR = lang === 'ar';
+
+  // Direction + font
+  document.documentElement.lang = lang;
+  document.documentElement.dir = isAR ? 'rtl' : 'ltr';
+  document.body.style.fontFamily = isAR ? "'Tajawal',sans-serif" : "'Rajdhani','Tajawal',sans-serif";
+
+  // Translate all [data-i18n]
+  document.querySelectorAll('[data-i18n]').forEach(function(el){
+    var k = el.getAttribute('data-i18n');
+    el.textContent = isAR ? k : (T[k] || k);
+  });
+
+  // Search placeholder
+  var si = document.querySelector('.topbar-search input');
+  if(si) si.placeholder = isAR ? 'بحث — عميل، عقار، شهادة...' : 'Search — client, property, cert...';
+
+  // Button styles
+  var btnAR = document.getElementById('btn-ar');
+  var btnEN = document.getElementById('btn-en');
+  if(btnAR){ btnAR.style.background = isAR ? 'var(--text)' : 'transparent'; btnAR.style.color = isAR ? '#fff' : 'var(--text2)'; }
+  if(btnEN){ btnEN.style.background = isAR ? 'transparent' : 'var(--text)'; btnEN.style.color = isAR ? 'var(--text2)' : '#fff'; }
+
+  // Update current page title in topbar
+  var titleEl = document.getElementById('page-title-text');
+  if(titleEl) {
+    var pg = document.querySelector('.crm-page.active');
+    if(pg) {
+      var titlesEN = {
+        'pg-dash':'Dashboard','pg-clients':'Client Management',
+        'pg-requests':'Incoming Requests','pg-pipeline':'Pipeline',
+        'pg-invoices':'Invoices','pg-payments':'Payments',
+        'pg-schedule':'Scheduling','pg-certs':'Certificates',
+        'pg-docs':'Documents','pg-team':'Technicians','pg-reports':'Reports'
+      };
+      titleEl.textContent = isAR ? (pageTitles[pg.id]||'') : (titlesEN[pg.id]||'');
+    }
+  }
+
+  // Rebuild calendar
+  buildCalendar();
+
+  // Toast
+  showToast(isAR ? '🇸🇦 تم التبديل للعربية' : '🇬🇧 Switched to English', 'info');
+}
+
+</script>
+<!-- ══ SUPABASE LIVE CONNECTION ══ -->
+<script type="module">
+import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm'
+
+const supabase = createClient(
+  'https://gjjmscyiewrdqtritsea.supabase.co',
+  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imdqam1zY3lpZXdyZHF0cml0c2VhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU3NDQ1ODEsImV4cCI6MjA5MTMyMDU4MX0.If9a0bXAtuYaM0n08xHGFCKnPVIv86jqzB577C3I4UM'
+)
+
+// ══ CLIENTS TABLE ══
+async function loadClients() {
+  const { data, error } = await supabase
+    .from('clients')
+    .select('*')
+    .order('created_at', { ascending: false })
+
+  if (error) { console.error('❌', error.message); return }
+
+  const tbody = document.getElementById('clients-tbody')
+  if (!tbody) return
+
+  tbody.innerHTML = data.map(c => `
+    <tr>
+      <td style="font-family:'IBM Plex Mono';color:#3182ce;font-size:11px">${c.client_code || '—'}</td>
+      <td>
+        <div style="font-weight:700">${c.company_name}</div>
+        <div style="font-size:10px;color:#4a5568">${c.contact_name}</div>
+      </td>
+      <td style="font-family:'IBM Plex Mono';font-size:11px">${c.phone}</td>
+      <td style="text-align:center;font-weight:700">—</td>
+      <td><span class="badge badge-gray">—</span></td>
+      <td style="font-family:'IBM Plex Mono';font-size:10px;color:#a0aec0">${c.created_at?.split('T')[0]}</td>
+      <td><span class="badge badge-${c.status === 'active' ? 'green' : 'yellow'}">● ${c.status === 'active' ? 'نشط' : 'معلق'}</span></td>
+      <td style="display:flex;gap:5px">
+        <button class="btn btn-outline btn-sm" onclick="showToast('${c.company_name}','info')">عرض</button>
+        <button class="btn btn-primary btn-sm" onclick="openModal('modal-new-cert')">شهادة</button>
+      </td>
+    </tr>
+  `).join('')
+
+  console.log('✅ عملاء محملون:', data.length)
+}
+
+// ══ DASHBOARD STATS ══
+async function loadDashboard() {
+  const [
+    { count: totalClients },
+    { count: pendingRequests },
+    { count: pendingDocs }
+  ] = await Promise.all([
+    supabase.from('clients').select('*', { count: 'exact', head: true }),
+    supabase.from('requests').select('*', { count: 'exact', head: true }).eq('stage', 'new'),
+    supabase.from('documents').select('*', { count: 'exact', head: true }).eq('status', 'pending')
+  ])
+
+  // تحديث KPI الأول (إجمالي العملاء)
+  const kpiEls = document.querySelectorAll('.kpi-val.green')
+  if (kpiEls[0]) kpiEls[0].textContent = totalClients || 0
+
+  const kpiRed = document.querySelectorAll('.kpi-val.red')
+  if (kpiRed[0]) kpiRed[0].textContent = pendingRequests || 0
+
+  console.log('✅ Dashboard محدّث')
+}
+// ══ CERTIFICATES TABLE ══
+async function loadCertificates() {
+  const { data, error } = await supabase
+    .from('certificates')
+    .select(`
+      *,
+      clients(company_name),
+      properties(property_name),
+      technicians(full_name, tech_code)
+    `)
+    .order('created_at', { ascending: false })
+
+  if (error) { console.error('❌', error.message); return }
+
+  const tbody = document.querySelector('#pg-certs table tbody')
+  if (!tbody) return
+
+  const statusColor = { active:'green', expiring_soon:'yellow', expired:'red', renewed:'blue' }
+  const statusLabel = { active:'● سارية', expiring_soon:'⚠ تنتهي قريباً', expired:'✕ منتهية', renewed:'↺ مجددة' }
+
+  tbody.innerHTML = data.map(c => `
+    <tr onclick="previewCertFromDB('${c.cert_ref}','${c.clients?.company_name}','${c.properties?.property_name}','${c.device_serial}','${c.install_date}','${c.issue_date}','${c.expiry_date}')">
+      <td style="font-family:'IBM Plex Mono';color:#b7791f;font-size:11px;font-weight:700">${c.cert_ref || '—'}</td>
+      <td style="font-weight:700">${c.clients?.company_name || '—'}</td>
+      <td style="font-family:'IBM Plex Mono';font-size:10px">${c.issue_date || '—'}</td>
+      <td style="font-family:'IBM Plex Mono';font-size:10px;color:${c.status==='expired'?'#e53e3e':c.status==='expiring_soon'?'#d69e2e':'#38a169'}">${c.expiry_date || '—'}</td>
+      <td><span class="badge badge-${statusColor[c.status]}">${statusLabel[c.status]}</span></td>
+      <td onclick="event.stopPropagation()" style="display:flex;gap:4px">
+        <button class="btn btn-outline btn-sm" onclick="showToast('جارٍ تحميل الشهادة','info')">PDF</button>
+        ${c.status !== 'active' ? `<button class="btn btn-warning btn-sm" onclick="openModal('modal-new-cert')">تجديد</button>` : ''}
+      </td>
+    </tr>
+  `).join('')
+
+  // تحديث badge الشهادات في sidebar
+  const badge = document.querySelector('.cs-item[onclick*="pg-certs"] .cs-badge')
+  if(badge) badge.textContent = data.filter(c => c.status === 'expiring_soon' || c.status === 'expired').length
+
+  console.log('✅ شهادات محملة:', data.length)
+}
+
+// ══ PREVIEW CERT FROM DB ══
+window.previewCertFromDB = function(ref, client, property, sn, installDate, issueDate, expiryDate) {
+  document.getElementById('cert-ref-display').textContent = ref
+  document.getElementById('cert-client-name').textContent = client
+  document.getElementById('cert-prop-name').textContent = property
+  document.getElementById('cert-sn').textContent = sn
+  document.getElementById('cert-install-date').textContent = installDate
+  document.getElementById('cert-issue-date').textContent = issueDate
+  document.getElementById('cert-exp-date').textContent = expiryDate
+  showToast('معاينة: ' + ref, 'info')
+}
+
+// ══ TECHNICIANS TABLE ══
+async function loadTeam() {
+  const { data, error } = await supabase
+    .from('technicians')
+    .select('*')
+    .eq('is_active', true)
+    .order('full_name')
+
+  if (error) { console.error('❌', error.message); return }
+
+  const grid = document.querySelector('#pg-team .kpi-grid + div')
+  if (!grid) return
+
+  grid.innerHTML = data.map(t => `
+    <div class="tech-card">
+      <div class="tc-head">
+        <div class="tc-av" style="background:linear-gradient(135deg,var(--blue),var(--cyan))">${t.full_name.charAt(0)}</div>
+        <span class="badge badge-green">● نشط</span>
+      </div>
+      <div style="font-size:14px;font-weight:700;margin-bottom:2px">${t.full_name}</div>
+      <div style="font-size:10px;color:var(--text3);font-family:'IBM Plex Mono';margin-bottom:12px">${t.tech_code} · Level ${t.level}</div>
+      <div style="display:flex;flex-direction:column;gap:5px">
+        <div style="display:flex;justify-content:space-between;font-size:11px">
+          <span style="color:var(--text2)">المستوى</span>
+          <span style="font-weight:700;color:var(--blue)">Level ${t.level}</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;font-size:11px">
+          <span style="color:var(--text2)">الهاتف</span>
+          <span style="font-family:'IBM Plex Mono';font-size:10px">${t.phone}</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;font-size:11px">
+          <span style="color:var(--text2)">تاريخ الانضمام</span>
+          <span style="font-family:'IBM Plex Mono';font-size:10px">${t.join_date || '—'}</span>
+        </div>
+      </div>
+    </div>
+  `).join('')
+
+  console.log('✅ فنيون محملون:', data.length)
+}
+
+// ══ SCHEDULES ══
+async function loadSchedules() {
+  const { data, error } = await supabase
+    .from('schedules')
+    .select(`
+      *,
+      technicians(full_name, tech_code),
+      properties(property_name, district),
+      requests(request_code)
+    `)
+    .order('scheduled_date', { ascending: true })
+
+  if (error) { console.error('❌', error.message); return }
+
+  const visitLabel = { installation:'تركيب', maintenance:'صيانة', inspection:'فحص', repair:'إصلاح' }
+  const statusColor = { scheduled:'green', in_progress:'yellow', completed:'blue', cancelled:'red' }
+
+  // تحديث زيارات اليوم في sidebar
+  const todayVisits = data.filter(s => s.scheduled_date === new Date().toISOString().split('T')[0])
+  const kpiBlue = document.querySelectorAll('.kpi-val.blue')
+  if (kpiBlue[0]) kpiBlue[0].textContent = todayVisits.length
+
+  console.log('✅ جدولة محملة:', data.length)
+}
+// ══ INIT ══
+window.addEventListener('load', () => {
+  loadDashboard()
+  loadClients()
+})
+
+// ══ REQUESTS TABLE ══
+async function loadRequests() {
+  const { data, error } = await supabase
+    .from('requests')
+    .select(`*, clients(company_name), properties(property_name, district)`)
+    .order('created_at', { ascending: false })
+
+  if (error) { console.error('❌', error.message); return }
+
+  const stageLabel = {
+    new: '① طلب جديد', awaiting_payment: '② بانتظار الدفع',
+    scheduled: '③ مجدول', installed: '④ تم التركيب', certified: '⑤ شهادة صادرة'
+  }
+  const stageColor = {
+    new: 'gray', awaiting_payment: 'blue',
+    scheduled: 'yellow', installed: 'orange', certified: 'green'
+  }
+  const stageBtnLabel = {
+    new: 'فاتورة', awaiting_payment: 'دفع مستلم',
+    scheduled: 'جدولة', installed: 'إصدار شهادة', certified: 'عرض'
+  }
+
+  // تحديث عدادات المراحل الخمسة
+  const stages = ['new','awaiting_payment','scheduled','installed','certified']
+  stages.forEach(stage => {
+    const count = data.filter(r => r.stage === stage).length
+    document.querySelectorAll('.stage-counter').forEach(el => {
+      if(el.dataset.stage === stage) el.textContent = count
+    })
+  })
+
+  // تحديث الجدول
+  const tbody = document.querySelector('#pg-requests table tbody')
+  if (!tbody) return
+
+  tbody.innerHTML = data.map(r => `
+    <tr onclick="openModal('modal-request-detail')">
+      <td style="font-family:'IBM Plex Mono';color:#3182ce;font-size:11px">${r.request_code || '—'}</td>
+      <td style="font-weight:700">${r.clients?.company_name || '—'}</td>
+      <td>${r.properties?.property_name || '—'}</td>
+      <td style="text-align:center;font-weight:700">${r.devices_count}</td>
+      <td style="font-family:'Rajdhani';font-weight:700;color:#3182ce">${Number(r.total_amount).toLocaleString()} د</td>
+      <td style="font-family:'IBM Plex Mono';font-size:10px">${r.created_at?.split('T')[0]}</td>
+      <td><span class="badge badge-${stageColor[r.stage]}">${stageLabel[r.stage]}</span></td>
+      <td onclick="event.stopPropagation()" style="display:flex;gap:4px">
+        <button class="btn btn-primary btn-sm" onclick="advanceStage('${r.id}','${r.stage}')">${stageBtnLabel[r.stage]}</button>
+        <button class="btn btn-outline btn-sm">تفاصيل</button>
+      </td>
+    </tr>
+  `).join('')
+
+  console.log('✅ طلبات محملة:', data.length)
+}
+
+// ══ ADVANCE REQUEST STAGE ══
+window.advanceStage = async function(id, currentStage) {
+  const next = {
+    new: 'awaiting_payment',
+    awaiting_payment: 'scheduled',
+    scheduled: 'installed',
+    installed: 'certified'
+  }
+  if (!next[currentStage]) { showToast('✅ الطلب مكتمل', 'success'); return }
+
+  const { error } = await supabase
+    .from('requests')
+    .update({ stage: next[currentStage] })
+    .eq('id', id)
+
+  if (error) { showToast('❌ ' + error.message, 'error'); return }
+
+  showToast('✅ تم تحديث مرحلة الطلب', 'success')
+  loadRequests()
+  loadDashboard()
+}
+
+// ══ INVOICES TABLE ══
+async function loadInvoices() {
+  const { data, error } = await supabase
+    .from('invoices')
+    .select(`*, clients(company_name), requests(request_code)`)
+    .order('created_at', { ascending: false })
+
+  if (error) { console.error('❌', error.message); return }
+
+  const statusColor = { pending:'yellow', paid:'green', overdue:'red', cancelled:'gray' }
+  const statusLabel = { pending:'⏳ مستحقة', paid:'✓ مدفوعة', overdue:'⚠ متأخرة', cancelled:'ملغاة' }
+
+  const tbody = document.querySelector('#pg-invoices table tbody')
+  if (!tbody) return
+
+  tbody.innerHTML = data.map(inv => `
+    <tr>
+      <td style="font-family:'IBM Plex Mono';color:#3182ce;font-size:11px">${inv.invoice_code || '—'}</td>
+      <td style="font-weight:700">${inv.clients?.company_name || '—'}</td>
+      <td style="font-family:'IBM Plex Mono';font-size:10px">${inv.requests?.request_code || '—'}</td>
+      <td style="font-family:'Rajdhani';font-weight:700;color:#3182ce">${Number(inv.amount).toLocaleString()} د</td>
+      <td style="font-family:'IBM Plex Mono';font-size:10px">${inv.issue_date || '—'}</td>
+      <td style="font-family:'IBM Plex Mono';font-size:10px;color:${inv.status==='pending'?'#d69e2e':'inherit'}">${inv.due_date || '—'}</td>
+      <td><span class="badge badge-${statusColor[inv.status]}">${statusLabel[inv.status]}</span></td>
+      <td style="display:flex;gap:4px">
+        ${inv.status === 'pending' ? `<button class="btn btn-success btn-sm" onclick="markPaid('${inv.id}')">تسجيل دفع</button>` : ''}
+        <button class="btn btn-outline btn-sm" onclick="showToast('جارٍ تحميل PDF','info')">PDF</button>
+      </td>
+    </tr>
+  `).join('')
+
+  // تحديث KPIs الفواتير
+  const pending = data.filter(i => i.status === 'pending')
+  const pendingAmount = pending.reduce((s, i) => s + Number(i.amount), 0)
+  const kpis = document.querySelectorAll('#pg-invoices .kpi-val')
+  if (kpis[0]) kpis[0].textContent = pendingAmount.toLocaleString()
+
+  console.log('✅ فواتير محملة:', data.length)
+}
+
+// ══ MARK INVOICE PAID ══
+window.markPaid = async function(id) {
+  const { error } = await supabase
+    .from('invoices')
+    .update({ status: 'paid' })
+    .eq('id', id)
+
+  if (error) { showToast('❌ ' + error.message, 'error'); return }
+
+  showToast('✅ تم تسجيل الدفع', 'success')
+  loadInvoices()
+}
+
+// ══ DOCUMENTS TABLE ══
+async function loadDocuments() {
+  const { data, error } = await supabase
+    .from('documents')
+    .select(`*, clients(company_name), properties(property_name)`)
+    .order('uploaded_at', { ascending: false })
+
+  if (error) { console.error('❌', error.message); return }
+
+  const tbody = document.querySelector('#pg-docs table tbody')
+  if (!tbody) return
+
+  const statusColor = { pending:'yellow', accepted:'green', rejected:'orange' }
+  const statusLabel = { pending:'⏳ جديد', accepted:'✓ مقبول', rejected:'↩ مُعاد' }
+
+  tbody.innerHTML = data.length ? data.map(doc => `
+    <tr>
+      <td style="font-weight:700">${doc.clients?.company_name || '—'}</td>
+      <td>${doc.doc_type}</td>
+      <td>${doc.properties?.property_name || '—'}</td>
+      <td style="font-family:'IBM Plex Mono';font-size:10px">${doc.uploaded_at?.split('T')[0]}</td>
+      <td style="font-family:'IBM Plex Mono';font-size:10px;color:#a0aec0">${doc.file_size_kb ? doc.file_size_kb + ' KB' : '—'}</td>
+      <td><span class="badge badge-${statusColor[doc.status]}">${statusLabel[doc.status]}</span></td>
+      <td style="display:flex;gap:4px">
+        ${doc.status === 'pending' ? `
+          <button class="btn btn-success btn-sm" onclick="acceptDoc('${doc.id}')">قبول</button>
+          <button class="btn btn-danger btn-sm" onclick="openModal('modal-reject-doc')">رفض</button>
+        ` : `<button class="btn btn-outline btn-sm" onclick="showToast('عرض المستند','info')">عرض</button>`}
+      </td>
+    </tr>
+  `).join('') : '<tr><td colspan="7" style="text-align:center;color:#a0aec0;padding:20px">لا توجد مستندات</td></tr>'
+
+  console.log('✅ مستندات محملة:', data.length)
+}
+
+// ══ ACCEPT DOCUMENT ══
+window.acceptDoc = async function(id) {
+  const { error } = await supabase
+    .from('documents')
+    .update({ status: 'accepted', reviewed_at: new Date().toISOString() })
+    .eq('id', id)
+
+  if (error) { showToast('❌ ' + error.message, 'error'); return }
+  showToast('✅ تم قبول المستند وإشعار العميل', 'success')
+  loadDocuments()
+}
+
+// ══ NAVIGATION ══
+window.showPage = function(id, el) {
+  document.querySelectorAll('.crm-page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.cs-item').forEach(i => i.classList.remove('active'));
+  document.getElementById(id)?.classList.add('active');
+  if(el) el.classList.add('active');
+  const titleEl = document.getElementById('page-title-text');
+  const titlesEN = {
+    'pg-dash':'Dashboard','pg-clients':'Client Management',
+    'pg-requests':'Incoming Requests','pg-pipeline':'Pipeline',
+    'pg-invoices':'Invoices','pg-payments':'Payments',
+    'pg-schedule':'Scheduling','pg-certs':'Certificates',
+    'pg-docs':'Documents','pg-team':'Technicians','pg-reports':'Reports'
+  };
+  if(titleEl) titleEl.textContent = currentLang==='ar' ? (pageTitles[id]||'') : (titlesEN[id]||'');
+  if (id === 'pg-clients')  loadClients()
+  if (id === 'pg-dash')     loadDashboard()
+  if (id === 'pg-requests') loadRequests()
+  if (id === 'pg-invoices') loadInvoices()
+  if (id === 'pg-docs')     loadDocuments()
+  if (id === 'pg-certs')    loadCertificates()
+  if (id === 'pg-team')     loadTeam()
+  if (id === 'pg-schedule') loadSchedules()
+}
+
+// ══ INIT ══
+window.addEventListener('load', () => {
+  setTimeout(() => {
+    loadDashboard()
+    loadClients()
+  }, 500)
+})
+</script>
+</body>
+</html>
