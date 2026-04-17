@@ -49,7 +49,7 @@ async function handleLogout() {
   try { await supabase.auth.signOut() } catch(e) {}
   localStorage.clear()
   sessionStorage.clear()
-  window.location.replace('/login')
+  window.location.replace('https://ate-landing.vercel.app')
 }
 
   return (
